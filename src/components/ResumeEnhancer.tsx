@@ -24,10 +24,46 @@ interface ResumeEnhancerProps {
 
 const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onClose }) => {
   const [currentFitmentScore, setCurrentFitmentScore] = useState(candidate?.fitmentScore || 85);
+  const [enhancedSections, setEnhancedSections] = useState<{[key: string]: any}>({});
   const [sectionStates, setSectionStates] = useState<{[key: string]: 'accepted' | 'rejected' | 'editing' | 'original'}>({});
   const [editingContent, setEditingContent] = useState<{[key: string]: any}>({});
   const [projectHyperlinks, setProjectHyperlinks] = useState<{[key: string]: string}>({});
+  const [sectionScoreImpacts, setSectionScoreImpacts] = useState<{[key: string]: number}>({});
   const [selectedSkills, setSelectedSkills] = useState<{[key: string]: boolean}>({});
+
+  // Load saved enhancement state on component mount
+  useEffect(() => {
+    if (candidate) {
+      // Load saved section states
+      const savedStates = localStorage.getItem(`enhancement_states_${candidate.id}`);
+      if (savedStates) {
+        try {
+          const states = JSON.parse(savedStates);
+          setSectionStates(states.sectionStates || {});
+          setEditingContent(states.editingContent || {});
+          setSelectedSkills(states.selectedSkills || {});
+          setProjectHyperlinks(states.projectHyperlinks || {});
+          
+          // Recalculate fitment score based on saved states
+          let calculatedScore = candidate.fitmentScore;
+          Object.entries(states.sectionStates || {}).forEach(([section, state]) => {
+            if (state === 'accepted') {
+              calculatedScore += sectionScoreImpacts[section] || 0;
+            }
+          });
+          
+          // Add skill selection impacts
+          Object.entries(states.selectedSkills || {}).forEach(([skill, selected]) => {
+            if (selected) calculatedScore += 1;
+          });
+          
+          setCurrentFitmentScore(calculatedScore);
+        } catch (error) {
+          console.error('Error loading saved enhancement states:', error);
+        }
+      }
+    }
+  }, [candidate]);
 
   // Get resume data for the candidate
   const getResumeData = () => {
@@ -159,50 +195,22 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
     }
   });
 
-  // Initialize enhancements and score impacts synchronously
-  const [enhancedSections] = useState(() => getEnhancementSuggestions());
-  const [sectionScoreImpacts] = useState(() => ({
-    education: 2,
-    summary: 3,
-    experience: 4,
-    projects: 3,
-    skills: 2,
-    achievements: 1
-  }));
-
-  // Load saved enhancement state on component mount
+  // Initialize enhancements on component mount
   useEffect(() => {
-    if (candidate) {
-      // Load saved section states
-      const savedStates = localStorage.getItem(`enhancement_states_${candidate.id}`);
-      if (savedStates) {
-        try {
-          const states = JSON.parse(savedStates);
-          setSectionStates(states.sectionStates || {});
-          setEditingContent(states.editingContent || {});
-          setSelectedSkills(states.selectedSkills || {});
-          setProjectHyperlinks(states.projectHyperlinks || {});
-          
-          // Recalculate fitment score based on saved states
-          let calculatedScore = candidate.fitmentScore;
-          Object.entries(states.sectionStates || {}).forEach(([section, state]) => {
-            if (state === 'accepted') {
-              calculatedScore += sectionScoreImpacts[section] || 0;
-            }
-          });
-          
-          // Add skill selection impacts
-          Object.entries(states.selectedSkills || {}).forEach(([skill, selected]) => {
-            if (selected) calculatedScore += 1;
-          });
-          
-          setCurrentFitmentScore(calculatedScore);
-        } catch (error) {
-          console.error('Error loading saved enhancement states:', error);
-        }
-      }
-    }
-  }, [candidate]);
+    const suggestions = getEnhancementSuggestions();
+    setEnhancedSections(suggestions);
+    
+    // Set initial score impacts for each section
+    const impacts = {
+      education: 2,
+      summary: 3,
+      experience: 4,
+      projects: 3,
+      skills: 2,
+      achievements: 1
+    };
+    setSectionScoreImpacts(impacts);
+  }, []);
 
   const handleSectionAction = (section: string, action: 'accept' | 'reject' | 'edit' | 'undo') => {
     const currentState = sectionStates[section] || 'original';
