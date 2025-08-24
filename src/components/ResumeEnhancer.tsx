@@ -38,6 +38,50 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
   const [newSectionStates, setNewSectionStates] = useState<{[key: string]: 'accepted' | 'rejected' | 'editing' | 'original'}>({});
   const [newSectionEditingContent, setNewSectionEditingContent] = useState<{[key: string]: any}>({});
   const [newSectionHyperlinks, setNewSectionHyperlinks] = useState<{[key: string]: string}>({});
+  
+  // Calculate enhancement metrics
+  const getEnhancementMetrics = () => {
+    const metrics: string[] = [];
+    
+    // Original sections
+    if (sectionStates.education === 'accepted') metrics.push('Enhanced Education');
+    if (sectionStates.summary === 'accepted') metrics.push('Enhanced Summary');
+    if (sectionStates.experience === 'accepted') metrics.push('Enhanced Experience');
+    if (sectionStates.projects === 'accepted') metrics.push('Enhanced Projects');
+    if (sectionStates.achievements === 'accepted') metrics.push('Enhanced Achievements');
+    
+    // Skills count
+    const addedSkillsCount = Object.values(selectedSkills).filter(Boolean).length;
+    if (addedSkillsCount > 0) metrics.push(`Added Skills: ${addedSkillsCount}`);
+    
+    // Project hyperlinks count
+    const projectHyperlinksCount = Object.values(projectHyperlinks).filter(link => link.trim() !== '').length;
+    if (projectHyperlinksCount > 0) metrics.push(`Added Hyperlinks: ${projectHyperlinksCount}`);
+    
+    // New sections
+    const acceptedCertifications = newSections.certifications.filter(entry => 
+      newSectionStates[`certifications_${entry.id}`] === 'accepted'
+    ).length;
+    if (acceptedCertifications > 0) {
+      metrics.push(`Added Certifications Section: ${acceptedCertifications} Certificate${acceptedCertifications > 1 ? 's' : ''}`);
+    }
+    
+    const acceptedResearchPapers = newSections.researchPapers.filter(entry => 
+      newSectionStates[`researchPapers_${entry.id}`] === 'accepted'
+    ).length;
+    if (acceptedResearchPapers > 0) {
+      metrics.push(`Added Research Papers Section: ${acceptedResearchPapers} Research Paper${acceptedResearchPapers > 1 ? 's' : ''}`);
+    }
+    
+    const acceptedVolunteering = newSections.volunteering.filter(entry => 
+      newSectionStates[`volunteering_${entry.id}`] === 'accepted'
+    ).length;
+    if (acceptedVolunteering > 0) {
+      metrics.push(`Added Volunteering Section: ${acceptedVolunteering} Entr${acceptedVolunteering > 1 ? 'ies' : 'y'}`);
+    }
+    
+    return metrics;
+  };
 
   // Get resume data for the candidate
   const getResumeData = () => {
@@ -594,6 +638,26 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                 ></div>
               </div>
             </div>
+            
+            {/* Enhancement Metrics */}
+            <div className="text-right">
+              <div className="text-sm text-gray-600 mb-2">Enhancement Summary</div>
+              <div className="bg-gray-50 rounded-lg p-3 max-w-xs">
+                {getEnhancementMetrics().length > 0 ? (
+                  <div className="space-y-1">
+                    {getEnhancementMetrics().map((metric, index) => (
+                      <div key={index} className="text-xs text-gray-700 flex items-center">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                        {metric}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-xs text-gray-500 italic">No enhancements accepted yet</div>
+                )}
+              </div>
+            </div>
+            
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
