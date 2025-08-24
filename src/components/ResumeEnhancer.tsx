@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Wand2, Sparkles, CheckCircle, XCircle, RotateCcw, User, Mail, Phone, Linkedin, Github, GraduationCap, Briefcase, Code, Trophy, FileText } from 'lucide-react';
+import { X, Wand2, Sparkles, CheckCircle, XCircle, RotateCcw, User, Mail, Phone, Linkedin, Github, GraduationCap, Briefcase, Code, Trophy, FileText, Save } from 'lucide-react';
 
 interface Candidate {
   id: string;
@@ -23,12 +23,12 @@ interface ResumeEnhancerProps {
 }
 
 const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onClose }) => {
-  const [currentFitmentScore, setCurrentFitmentScore] = useState(85);
-  const [isEnhancing, setIsEnhancing] = useState(false);
-  const [enhancementProgress, setEnhancementProgress] = useState(0);
+  const [currentFitmentScore, setCurrentFitmentScore] = useState(candidate?.fitmentScore || 85);
   const [enhancedSections, setEnhancedSections] = useState<{[key: string]: any}>({});
-  const [sectionStates, setSectionStates] = useState<{[key: string]: 'original' | 'enhanced'}>({});
+  const [sectionStates, setSectionStates] = useState<{[key: string]: 'accepted' | 'rejected' | 'editing' | 'original'}>({});
+  const [editingContent, setEditingContent] = useState<{[key: string]: any}>({});
   const [projectHyperlinks, setProjectHyperlinks] = useState<{[key: string]: string}>({});
+  const [sectionScoreImpacts, setSectionScoreImpacts] = useState<{[key: string]: number}>({});
 
   // Get resume data for the candidate
   const getResumeData = () => {
@@ -110,7 +110,7 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
   const resumeData = getResumeData();
 
   // Enhanced suggestions for each section
-  const enhancementSuggestions = {
+  const getEnhancementSuggestions = () => ({
     education: {
       original: resumeData.education,
       enhanced: "Bachelor of Computer Science, Pune University (2021-2025)\nRelevant Coursework: Data Structures, Algorithms, Database Management, Software Engineering\nGPA: 8.5/10"
@@ -145,46 +145,76 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
         "• Completed Oracle Java SE 11 Developer Certification"
       ]
     }
-  };
+  });
 
-  const handleStartEnhancement = () => {
-    setIsEnhancing(true);
-    setEnhancementProgress(0);
+  // Initialize enhancements on component mount
+  useEffect(() => {
+    const suggestions = getEnhancementSuggestions();
+    setEnhancedSections(suggestions);
     
-    // Simulate AI enhancement process
-    const interval = setInterval(() => {
-      setEnhancementProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsEnhancing(false);
-          // Set all sections to enhanced by default
-          const newSectionStates: {[key: string]: 'original' | 'enhanced'} = {};
-          Object.keys(enhancementSuggestions).forEach(section => {
-            newSectionStates[section] = 'enhanced';
-          });
-          setSectionStates(newSectionStates);
-          setEnhancedSections(enhancementSuggestions);
-          setCurrentFitmentScore(92);
-          return 100;
-        }
-        return prev + 2;
-      });
-    }, 50);
-  };
+    // Set initial score impacts for each section
+    const impacts = {
+      education: 2,
+      summary: 3,
+      experience: 4,
+      projects: 3,
+      skills: 2,
+      achievements: 1
+    };
+    setSectionScoreImpacts(impacts);
+  }, []);
 
   const handleSectionAction = (section: string, action: 'accept' | 'reject' | 'edit' | 'undo') => {
+    const currentState = sectionStates[section] || 'original';
+    const scoreImpact = sectionScoreImpacts[section] || 0;
+    
     if (action === 'accept') {
-      setSectionStates(prev => ({ ...prev, [section]: 'enhanced' }));
-    } else if (action === 'reject' || action === 'undo') {
+      setSectionStates(prev => ({ ...prev, [section]: 'accepted' }));
+      if (currentState !== 'accepted') {
+        setCurrentFitmentScore(prev => Math.min(100, prev + scoreImpact));
+      }
+    } else if (action === 'reject') {
+      setSectionStates(prev => ({ ...prev, [section]: 'rejected' }));
+      if (currentState === 'accepted') {
+        setCurrentFitmentScore(prev => Math.max(0, prev - scoreImpact));
+      }
+    } else if (action === 'edit') {
+      setSectionStates(prev => ({ ...prev, [section]: 'editing' }));
+      setEditingContent(prev => ({
+        ...prev,
+        [section]: enhancedSections[section]?.enhanced
+      }));
+    } else if (action === 'undo') {
+      if (currentState === 'accepted') {
+        setCurrentFitmentScore(prev => Math.max(0, prev - scoreImpact));
+      }
       setSectionStates(prev => ({ ...prev, [section]: 'original' }));
+      setEditingContent(prev => {
+        const newContent = { ...prev };
+        delete newContent[section];
+        return newContent;
+      });
     }
   };
 
-  const handleSectionEdit = (section: string, newContent: any) => {
+  const handleSaveEdit = (section: string) => {
+    const editedContent = editingContent[section];
     setEnhancedSections(prev => ({
       ...prev,
-      [section]: { ...prev[section], enhanced: newContent }
+      [section]: { ...prev[section], enhanced: editedContent }
     }));
+    setSectionStates(prev => ({ ...prev, [section]: 'accepted' }));
+    const scoreImpact = sectionScoreImpacts[section] || 0;
+    setCurrentFitmentScore(prev => Math.min(100, prev + scoreImpact));
+    setEditingContent(prev => {
+      const newContent = { ...prev };
+      delete newContent[section];
+      return newContent;
+    });
+  };
+
+  const handleSectionEdit = (section: string, newContent: any) => {
+    setEditingContent(prev => ({ ...prev, [section]: newContent }));
   };
 
   const handleProjectHyperlinkChange = (projectIndex: number, hyperlink: string) => {
@@ -198,12 +228,12 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
     if (candidate && onSave) {
       const enhancedResume = {
         ...resumeData,
-        education: sectionStates.education === 'enhanced' ? enhancedSections.education?.enhanced : resumeData.education,
-        summary: sectionStates.summary === 'enhanced' ? enhancedSections.summary?.enhanced : resumeData.summary,
-        experience: sectionStates.experience === 'enhanced' ? enhancedSections.experience?.enhanced : resumeData.experience,
-        projects: sectionStates.projects === 'enhanced' ? enhancedSections.projects?.enhanced : resumeData.projects,
-        skills: sectionStates.skills === 'enhanced' ? enhancedSections.skills?.enhanced : resumeData.skills,
-        achievements: sectionStates.achievements === 'enhanced' ? enhancedSections.achievements?.enhanced : resumeData.achievements,
+        education: sectionStates.education === 'accepted' ? enhancedSections.education?.enhanced : resumeData.education,
+        summary: sectionStates.summary === 'accepted' ? enhancedSections.summary?.enhanced : resumeData.summary,
+        experience: sectionStates.experience === 'accepted' ? enhancedSections.experience?.enhanced : resumeData.experience,
+        projects: sectionStates.projects === 'accepted' ? enhancedSections.projects?.enhanced : resumeData.projects,
+        skills: sectionStates.skills === 'accepted' ? enhancedSections.skills?.enhanced : resumeData.skills,
+        achievements: sectionStates.achievements === 'accepted' ? enhancedSections.achievements?.enhanced : resumeData.achievements,
         projectHyperlinks: projectHyperlinks
       };
       
@@ -212,8 +242,34 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
     onClose();
   };
 
-  const ActionButtons: React.FC<{ section: string }> = ({ section }) => (
+  const ActionButtons: React.FC<{ section: string }> = ({ section }) => {
+    const currentState = sectionStates[section] || 'original';
+    const isEditing = currentState === 'editing';
+    
+    if (isEditing) {
+      return (
+        <div className="flex space-x-2 mt-2">
+          <button
+            onClick={() => handleSaveEdit(section)}
+            className="flex items-center space-x-1 bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600 transition-colors"
+          >
+            <Save className="w-3 h-3" />
+            <span>Save Edit</span>
+          </button>
+          <button
+            onClick={() => handleSectionAction(section, 'undo')}
+            className="flex items-center space-x-1 bg-gray-500 text-white px-3 py-1 rounded text-xs hover:bg-gray-600 transition-colors"
+          >
+            <RotateCcw className="w-3 h-3" />
+            <span>Cancel</span>
+          </button>
+        </div>
+      );
+    }
+    
+    return (
     <div className="flex space-x-2 mt-2">
+      {currentState !== 'accepted' && (
       <button
         onClick={() => handleSectionAction(section, 'accept')}
         className="flex items-center space-x-1 bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600 transition-colors"
@@ -221,6 +277,8 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
         <CheckCircle className="w-3 h-3" />
         <span>Accept</span>
       </button>
+      )}
+      {currentState !== 'rejected' && (
       <button
         onClick={() => handleSectionAction(section, 'reject')}
         className="flex items-center space-x-1 bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600 transition-colors"
@@ -228,12 +286,16 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
         <XCircle className="w-3 h-3" />
         <span>Reject</span>
       </button>
+      )}
+      {currentState !== 'editing' && (
       <button
         onClick={() => handleSectionAction(section, 'edit')}
         className="flex items-center space-x-1 bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600 transition-colors"
       >
         <span>Edit</span>
       </button>
+      )}
+      {currentState !== 'original' && (
       <button
         onClick={() => handleSectionAction(section, 'undo')}
         className="flex items-center space-x-1 bg-gray-500 text-white px-3 py-1 rounded text-xs hover:bg-gray-600 transition-colors"
@@ -241,8 +303,25 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
         <RotateCcw className="w-3 h-3" />
         <span>Undo</span>
       </button>
+      )}
     </div>
-  );
+    );
+  };
+
+  const getStatusBadge = (section: string) => {
+    const currentState = sectionStates[section] || 'original';
+    
+    switch (currentState) {
+      case 'accepted':
+        return <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded ml-2">✓ Accepted</span>;
+      case 'rejected':
+        return <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded ml-2">✗ Rejected</span>;
+      case 'editing':
+        return <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded ml-2">✎ Editing</span>;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -262,6 +341,13 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
             <div className="text-right">
               <div className="text-sm text-gray-600">Current Fitment</div>
               <div className="text-2xl font-bold text-purple-600">{currentFitmentScore}%</div>
+              {/* Progress Bar */}
+              <div className="w-24 bg-gray-200 rounded-full h-2 mt-2">
+                <div 
+                  className="bg-purple-500 h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${currentFitmentScore}%` }}
+                ></div>
+              </div>
             </div>
             <button
               onClick={onClose}
@@ -272,22 +358,6 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
           </div>
         </div>
 
-        {/* AI Enhancement Status */}
-        <div className="p-6 bg-gradient-to-r from-purple-50 to-blue-50 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-2">
-              <Sparkles className="w-5 h-5 text-purple-600" />
-              <span className="font-medium text-gray-900">AI Enhancement Ready</span>
-            </div>
-            <div className="flex space-x-3">
-              <button
-                onClick={handleStartEnhancement}
-                disabled={isEnhancing}
-                className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-              >
-                <Wand2 className="w-4 h-4" />
-                <span>{isEnhancing ? 'Enhancing...' : 'Start AI Enhancement'}</span>
-              </button>
               <button
                 onClick={handleSaveEnhancements}
                 className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm"
@@ -295,16 +365,6 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                 Save Enhanced Resume
               </button>
             </div>
-          </div>
-          
-          {isEnhancing && (
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${enhancementProgress}%` }}
-              ></div>
-            </div>
-          )}
         </div>
 
         {/* Resume Comparison */}
@@ -452,22 +512,27 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                 <div className="flex items-center space-x-2 mb-3">
                   <GraduationCap className="w-4 h-4 text-blue-600" />
                   <h3 className="font-semibold text-gray-900">Education</h3>
+                  {getStatusBadge('education')}
                 </div>
-                {enhancedSections.education ? (
+                {enhancedSections.education && (
                   <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                     <div className="mb-2">
                       <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Suggested Addition</span>
                     </div>
+                    {sectionStates.education === 'editing' ? (
                     <textarea
-                      value={sectionStates.education === 'enhanced' ? enhancedSections.education.enhanced : enhancedSections.education.original}
+                        value={editingContent.education || ''}
                       onChange={(e) => handleSectionEdit('education', e.target.value)}
                       className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
                       rows={3}
                     />
+                    ) : (
+                      <div className={`text-sm text-gray-700 ${sectionStates.education === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                        {enhancedSections.education.enhanced}
+                      </div>
+                    )}
                     <ActionButtons section="education" />
                   </div>
-                ) : (
-                  <p className="text-gray-700 text-sm">{resumeData.education}</p>
                 )}
               </div>
 
@@ -476,19 +541,24 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                 <div className="flex items-center space-x-2 mb-3">
                   <User className="w-4 h-4 text-blue-600" />
                   <h3 className="font-semibold text-gray-900">Summary</h3>
+                  {getStatusBadge('summary')}
                 </div>
-                {enhancedSections.summary ? (
+                {enhancedSections.summary && (
                   <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    {sectionStates.summary === 'editing' ? (
                     <textarea
-                      value={sectionStates.summary === 'enhanced' ? enhancedSections.summary.enhanced : enhancedSections.summary.original}
+                        value={editingContent.summary || ''}
                       onChange={(e) => handleSectionEdit('summary', e.target.value)}
                       className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
                       rows={4}
                     />
+                    ) : (
+                      <div className={`text-sm text-gray-700 ${sectionStates.summary === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                        {enhancedSections.summary.enhanced}
+                      </div>
+                    )}
                     <ActionButtons section="summary" />
                   </div>
-                ) : (
-                  <p className="text-gray-700 text-sm">{resumeData.summary}</p>
                 )}
               </div>
 
@@ -497,19 +567,21 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                 <div className="flex items-center space-x-2 mb-3">
                   <Briefcase className="w-4 h-4 text-blue-600" />
                   <h3 className="font-semibold text-gray-900">Experience</h3>
+                  {getStatusBadge('experience')}
                 </div>
-                {enhancedSections.experience ? (
+                {enhancedSections.experience && (
                   <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                     <div className="mb-2">
                       <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Suggested Improvement</span>
                     </div>
+                    {sectionStates.experience === 'editing' ? (
                     <div className="space-y-2">
-                      {(sectionStates.experience === 'enhanced' ? enhancedSections.experience.enhanced : enhancedSections.experience.original).map((exp: string, index: number) => (
+                        {(editingContent.experience || enhancedSections.experience.enhanced).map((exp: string, index: number) => (
                         <textarea
                           key={index}
                           value={exp}
                           onChange={(e) => {
-                            const newExperience = [...(sectionStates.experience === 'enhanced' ? enhancedSections.experience.enhanced : enhancedSections.experience.original)];
+                              const newExperience = [...(editingContent.experience || enhancedSections.experience.enhanced)];
                             newExperience[index] = e.target.value;
                             handleSectionEdit('experience', newExperience);
                           }}
@@ -518,13 +590,16 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                         />
                       ))}
                     </div>
+                    ) : (
+                      <div className={`space-y-2 ${sectionStates.experience === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                        {enhancedSections.experience.enhanced.map((exp: string, index: number) => (
+                          <div key={index} className="text-sm text-gray-700">
+                            {exp}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <ActionButtons section="experience" />
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {resumeData.experience.map((exp: string, index: number) => (
-                      <p key={index} className="text-gray-700 text-sm">• {exp}</p>
-                    ))}
                   </div>
                 )}
               </div>
@@ -534,16 +609,18 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                 <div className="flex items-center space-x-2 mb-3">
                   <Code className="w-4 h-4 text-blue-600" />
                   <h3 className="font-semibold text-gray-900">Projects</h3>
+                  {getStatusBadge('projects')}
                 </div>
-                {enhancedSections.projects ? (
+                {enhancedSections.projects && (
                   <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    {sectionStates.projects === 'editing' ? (
                     <div className="space-y-4">
-                      {(sectionStates.projects === 'enhanced' ? enhancedSections.projects.enhanced : enhancedSections.projects.original).map((project: string, index: number) => (
+                        {(editingContent.projects || enhancedSections.projects.enhanced).map((project: string, index: number) => (
                         <div key={index} className="space-y-2">
                           <textarea
                             value={project}
                             onChange={(e) => {
-                              const newProjects = [...(sectionStates.projects === 'enhanced' ? enhancedSections.projects.enhanced : enhancedSections.projects.original)];
+                                const newProjects = [...(editingContent.projects || enhancedSections.projects.enhanced)];
                               newProjects[index] = e.target.value;
                               handleSectionEdit('projects', newProjects);
                             }}
@@ -560,13 +637,23 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                         </div>
                       ))}
                     </div>
+                    ) : (
+                      <div className={`space-y-4 ${sectionStates.projects === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                        {enhancedSections.projects.enhanced.map((project: string, index: number) => (
+                          <div key={index} className="space-y-2">
+                            <div className="text-sm text-gray-700">{project}</div>
+                            <input
+                              type="url"
+                              placeholder="Enter project hyperlink (e.g., GitHub or Live Demo)"
+                              value={projectHyperlinks[`project_${index}`] || ''}
+                              onChange={(e) => handleProjectHyperlinkChange(index, e.target.value)}
+                              className="w-full text-sm text-gray-600 bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <ActionButtons section="projects" />
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {resumeData.projects.map((project: string, index: number) => (
-                      <p key={index} className="text-gray-700 text-sm">• {project}</p>
-                    ))}
                   </div>
                 )}
               </div>
@@ -576,28 +663,21 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                 <div className="flex items-center space-x-2 mb-3">
                   <Code className="w-4 h-4 text-blue-600" />
                   <h3 className="font-semibold text-gray-900">Skills</h3>
+                  {getStatusBadge('skills')}
                 </div>
-                {enhancedSections.skills ? (
+                {enhancedSections.skills && (
                   <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                     <div className="mb-2">
                       <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Suggested Skills to Add</span>
                     </div>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {(sectionStates.skills === 'enhanced' ? enhancedSections.skills.enhanced : enhancedSections.skills.original).map((skill: string, index: number) => (
+                    <div className={`flex flex-wrap gap-2 mb-3 ${sectionStates.skills === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                      {enhancedSections.skills.enhanced.map((skill: string, index: number) => (
                         <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
                           {skill}
                         </span>
                       ))}
                     </div>
                     <ActionButtons section="skills" />
-                  </div>
-                ) : (
-                  <div className="flex flex-wrap gap-2">
-                    {resumeData.skills.map((skill: string, index: number) => (
-                      <span key={index} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
-                        {skill}
-                      </span>
-                    ))}
                   </div>
                 )}
               </div>
@@ -607,16 +687,18 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                 <div className="flex items-center space-x-2 mb-3">
                   <Trophy className="w-4 h-4 text-blue-600" />
                   <h3 className="font-semibold text-gray-900">Achievements</h3>
+                  {getStatusBadge('achievements')}
                 </div>
-                {enhancedSections.achievements ? (
+                {enhancedSections.achievements && (
                   <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    {sectionStates.achievements === 'editing' ? (
                     <div className="space-y-2">
-                      {(sectionStates.achievements === 'enhanced' ? enhancedSections.achievements.enhanced : enhancedSections.achievements.original).map((achievement: string, index: number) => (
+                        {(editingContent.achievements || enhancedSections.achievements.enhanced).map((achievement: string, index: number) => (
                         <textarea
                           key={index}
                           value={achievement}
                           onChange={(e) => {
-                            const newAchievements = [...(sectionStates.achievements === 'enhanced' ? enhancedSections.achievements.enhanced : enhancedSections.achievements.original)];
+                              const newAchievements = [...(editingContent.achievements || enhancedSections.achievements.enhanced)];
                             newAchievements[index] = e.target.value;
                             handleSectionEdit('achievements', newAchievements);
                           }}
@@ -625,13 +707,16 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                         />
                       ))}
                     </div>
+                    ) : (
+                      <div className={`space-y-2 ${sectionStates.achievements === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                        {enhancedSections.achievements.enhanced.map((achievement: string, index: number) => (
+                          <div key={index} className="text-sm text-gray-700">
+                            {achievement}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <ActionButtons section="achievements" />
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {resumeData.achievements.map((achievement: string, index: number) => (
-                      <p key={index} className="text-gray-700 text-sm">• {achievement}</p>
-                    ))}
                   </div>
                 )}
               </div>
