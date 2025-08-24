@@ -30,6 +30,14 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
   const [projectHyperlinks, setProjectHyperlinks] = useState<{[key: string]: string}>({});
   const [sectionScoreImpacts, setSectionScoreImpacts] = useState<{[key: string]: number}>({});
   const [selectedSkills, setSelectedSkills] = useState<{[key: string]: boolean}>({});
+  const [newSections, setNewSections] = useState<{[key: string]: any[]}>({
+    certifications: [],
+    researchPapers: [],
+    volunteering: []
+  });
+  const [newSectionStates, setNewSectionStates] = useState<{[key: string]: 'accepted' | 'rejected' | 'editing' | 'original'}>({});
+  const [newSectionEditingContent, setNewSectionEditingContent] = useState<{[key: string]: any}>({});
+  const [newSectionHyperlinks, setNewSectionHyperlinks] = useState<{[key: string]: string}>({});
 
   // Get resume data for the candidate
   const getResumeData = () => {
@@ -163,6 +171,19 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
       achievements: 1
     };
     setSectionScoreImpacts(impacts);
+    
+    // Initialize new sections with sample entries
+    setNewSections({
+      certifications: [
+        { id: 'cert_1', text: 'Oracle Java SE 11 Developer Certification', hyperlink: '' }
+      ],
+      researchPapers: [
+        { id: 'research_1', text: 'Machine Learning Applications in Web Development - Published in IEEE Conference 2023', hyperlink: '' }
+      ],
+      volunteering: [
+        { id: 'volunteer_1', text: 'Technical Mentor at Local Coding Bootcamp - Helped 20+ students learn programming fundamentals' }
+      ]
+    });
   }, []);
 
   const handleSectionAction = (section: string, action: 'accept' | 'reject' | 'edit' | 'undo') => {
@@ -196,6 +217,92 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
         return newContent;
       });
     }
+  };
+
+  const handleNewSectionAction = (sectionType: string, entryId: string, action: 'accept' | 'reject' | 'edit' | 'undo') => {
+    const stateKey = `${sectionType}_${entryId}`;
+    const currentState = newSectionStates[stateKey] || 'original';
+    const scoreImpact = 2; // Each new section entry contributes +2%
+    
+    if (action === 'accept') {
+      setNewSectionStates(prev => ({ ...prev, [stateKey]: 'accepted' }));
+      if (currentState !== 'accepted') {
+        setCurrentFitmentScore(prev => Math.min(100, prev + scoreImpact));
+      }
+    } else if (action === 'reject') {
+      setNewSectionStates(prev => ({ ...prev, [stateKey]: 'rejected' }));
+      if (currentState === 'accepted') {
+        setCurrentFitmentScore(prev => Math.max(0, prev - scoreImpact));
+      }
+    } else if (action === 'edit') {
+      setNewSectionStates(prev => ({ ...prev, [stateKey]: 'editing' }));
+      const entry = newSections[sectionType].find(e => e.id === entryId);
+      setNewSectionEditingContent(prev => ({
+        ...prev,
+        [`${stateKey}_text`]: entry?.text || '',
+        [`${stateKey}_hyperlink`]: entry?.hyperlink || ''
+      }));
+    } else if (action === 'undo') {
+      if (currentState === 'accepted') {
+        setCurrentFitmentScore(prev => Math.max(0, prev - scoreImpact));
+      }
+      setNewSectionStates(prev => ({ ...prev, [stateKey]: 'original' }));
+      setNewSectionEditingContent(prev => {
+        const newContent = { ...prev };
+        delete newContent[`${stateKey}_text`];
+        delete newContent[`${stateKey}_hyperlink`];
+        return newContent;
+      });
+    }
+  };
+
+  const handleSaveNewSectionEdit = (sectionType: string, entryId: string) => {
+    const stateKey = `${sectionType}_${entryId}`;
+    const editedText = newSectionEditingContent[`${stateKey}_text`];
+    const editedHyperlink = newSectionEditingContent[`${stateKey}_hyperlink`];
+    
+    setNewSections(prev => ({
+      ...prev,
+      [sectionType]: prev[sectionType].map(entry => 
+        entry.id === entryId 
+          ? { ...entry, text: editedText, hyperlink: editedHyperlink || entry.hyperlink }
+          : entry
+      )
+    }));
+    
+    setNewSectionStates(prev => ({ ...prev, [stateKey]: 'accepted' }));
+    const scoreImpact = 2;
+    setCurrentFitmentScore(prev => Math.min(100, prev + scoreImpact));
+    
+    setNewSectionEditingContent(prev => {
+      const newContent = { ...prev };
+      delete newContent[`${stateKey}_text`];
+      delete newContent[`${stateKey}_hyperlink`];
+      return newContent;
+    });
+  };
+
+  const handleAddNewEntry = (sectionType: string) => {
+    const newId = `${sectionType}_${Date.now()}`;
+    const newEntry = {
+      id: newId,
+      text: '',
+      ...(sectionType === 'certifications' || sectionType === 'researchPapers' ? { hyperlink: '' } : {})
+    };
+    
+    setNewSections(prev => ({
+      ...prev,
+      [sectionType]: [...prev[sectionType], newEntry]
+    }));
+    
+    // Automatically start editing the new entry
+    const stateKey = `${sectionType}_${newId}`;
+    setNewSectionStates(prev => ({ ...prev, [stateKey]: 'editing' }));
+    setNewSectionEditingContent(prev => ({
+      ...prev,
+      [`${stateKey}_text`]: '',
+      [`${stateKey}_hyperlink`]: ''
+    }));
   };
 
   const handleSkillToggle = (skill: string) => {
@@ -252,7 +359,17 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
         projects: sectionStates.projects === 'accepted' ? enhancedSections.projects?.enhanced : resumeData.projects,
         skills: sectionStates.skills === 'accepted' ? enhancedSections.skills?.enhanced : resumeData.skills,
         achievements: sectionStates.achievements === 'accepted' ? enhancedSections.achievements?.enhanced : resumeData.achievements,
-        projectHyperlinks: projectHyperlinks
+        projectHyperlinks: projectHyperlinks,
+        certifications: newSections.certifications.filter(entry => 
+          newSectionStates[`certifications_${entry.id}`] === 'accepted'
+        ),
+        researchPapers: newSections.researchPapers.filter(entry => 
+          newSectionStates[`researchPapers_${entry.id}`] === 'accepted'
+        ),
+        volunteering: newSections.volunteering.filter(entry => 
+          newSectionStates[`volunteering_${entry.id}`] === 'accepted'
+        ),
+        newSectionHyperlinks: newSectionHyperlinks
       };
       
       onSave(candidate.id, currentFitmentScore, enhancedResume);
@@ -260,22 +377,45 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
     onClose();
   };
 
-  const ActionButtons: React.FC<{ section: string }> = ({ section }) => {
+  const ActionButtons: React.FC<{ section: string; sectionType?: 'original' | 'new'; entryId?: string }> = ({ 
+    section, 
+    sectionType = 'original', 
+    entryId 
+  }) => {
+    const currentState = sectionType === 'original' 
+      ? (sectionStates[section] || 'original')
+      : (newSectionStates[`${section}_${entryId}`] || 'original');
     const currentState = sectionStates[section] || 'original';
     const isEditing = currentState === 'editing';
+    
+    const handleAction = (action: 'accept' | 'reject' | 'edit' | 'undo') => {
+      if (sectionType === 'original') {
+        handleSectionAction(section, action);
+      } else if (entryId) {
+        handleNewSectionAction(section, entryId, action);
+      }
+    };
+    
+    const handleSaveEdit = () => {
+      if (sectionType === 'original') {
+        handleSaveEdit(section);
+      } else if (entryId) {
+        handleSaveNewSectionEdit(section, entryId);
+      }
+    };
     
     if (isEditing) {
       return (
         <div className="flex space-x-2 mt-2">
           <button
-            onClick={() => handleSaveEdit(section)}
+            onClick={handleSaveEdit}
             className="flex items-center space-x-1 bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600 transition-colors"
           >
             <Save className="w-3 h-3" />
             <span>Save Edit</span>
           </button>
           <button
-            onClick={() => handleSectionAction(section, 'undo')}
+            onClick={() => handleAction('undo')}
             className="flex items-center space-x-1 bg-gray-500 text-white px-3 py-1 rounded text-xs hover:bg-gray-600 transition-colors"
           >
             <RotateCcw className="w-3 h-3" />
@@ -289,7 +429,7 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
     <div className="flex space-x-2 mt-2">
       {currentState !== 'accepted' && (
       <button
-        onClick={() => handleSectionAction(section, 'accept')}
+        onClick={() => handleAction('accept')}
         className="flex items-center space-x-1 bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600 transition-colors"
       >
         <CheckCircle className="w-3 h-3" />
@@ -298,7 +438,7 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
       )}
       {currentState !== 'rejected' && (
       <button
-        onClick={() => handleSectionAction(section, 'reject')}
+        onClick={() => handleAction('reject')}
         className="flex items-center space-x-1 bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600 transition-colors"
       >
         <XCircle className="w-3 h-3" />
@@ -307,7 +447,7 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
       )}
       {currentState !== 'editing' && (
       <button
-        onClick={() => handleSectionAction(section, 'edit')}
+        onClick={() => handleAction('edit')}
         className="flex items-center space-x-1 bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600 transition-colors"
       >
         <span>Edit</span>
@@ -315,7 +455,7 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
       )}
       {currentState !== 'original' && (
       <button
-        onClick={() => handleSectionAction(section, 'undo')}
+        onClick={() => handleAction('undo')}
         className="flex items-center space-x-1 bg-gray-500 text-white px-3 py-1 rounded text-xs hover:bg-gray-600 transition-colors"
       >
         <RotateCcw className="w-3 h-3" />
@@ -326,8 +466,10 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
     );
   };
 
-  const getStatusBadge = (section: string) => {
-    const currentState = sectionStates[section] || 'original';
+  const getStatusBadge = (section: string, sectionType: 'original' | 'new' = 'original', entryId?: string) => {
+    const currentState = sectionType === 'original' 
+      ? (sectionStates[section] || 'original')
+      : (newSectionStates[`${section}_${entryId}`] || 'original');
     
     switch (currentState) {
       case 'accepted':
@@ -339,6 +481,92 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
       default:
         return null;
     }
+  };
+
+  const NewSectionRenderer: React.FC<{ 
+    sectionType: string; 
+    title: string; 
+    icon: React.ComponentType<any>;
+    hasHyperlinks?: boolean;
+  }> = ({ sectionType, title, icon: Icon, hasHyperlinks = false }) => {
+    const entries = newSections[sectionType] || [];
+    
+    return (
+      <div className="mb-6">
+        <div className="flex items-center space-x-2 mb-3">
+          <Icon className="w-4 h-4 text-blue-600" />
+          <h3 className="font-semibold text-gray-900">{title}</h3>
+          <button
+            onClick={() => handleAddNewEntry(sectionType)}
+            className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition-colors"
+          >
+            + Add
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          {entries.map((entry, index) => {
+            const stateKey = `${sectionType}_${entry.id}`;
+            const currentState = newSectionStates[stateKey] || 'original';
+            const isEditing = currentState === 'editing';
+            const isRejected = currentState === 'rejected';
+            
+            return (
+              <div key={entry.id} className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                <div className="mb-2">
+                  <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                    {title} Entry {index + 1}
+                  </span>
+                  {getStatusBadge(sectionType, 'new', entry.id)}
+                </div>
+                
+                {isEditing ? (
+                  <div className="space-y-3">
+                    <textarea
+                      value={newSectionEditingContent[`${stateKey}_text`] || ''}
+                      onChange={(e) => setNewSectionEditingContent(prev => ({
+                        ...prev,
+                        [`${stateKey}_text`]: e.target.value
+                      }))}
+                      placeholder={`Enter ${title.toLowerCase()} details...`}
+                      className="w-full text-sm text-gray-700 bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                      rows={3}
+                    />
+                    {hasHyperlinks && (
+                      <input
+                        type="url"
+                        value={newSectionEditingContent[`${stateKey}_hyperlink`] || ''}
+                        onChange={(e) => setNewSectionEditingContent(prev => ({
+                          ...prev,
+                          [`${stateKey}_hyperlink`]: e.target.value
+                        }))}
+                        placeholder="Enter hyperlink (optional)"
+                        className="w-full text-sm text-gray-600 bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className={`text-sm text-gray-700 ${isRejected ? 'line-through opacity-60' : ''}`}>
+                      {entry.text || 'No content added yet'}
+                    </div>
+                    {hasHyperlinks && entry.hyperlink && (
+                      <div className={`text-sm text-blue-600 ${isRejected ? 'line-through opacity-60' : ''}`}>
+                        <a href={entry.hyperlink} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                          {entry.hyperlink}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                <ActionButtons section={sectionType} sectionType="new" entryId={entry.id} />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -777,6 +1005,30 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                   </div>
                 )}
               </div>
+
+              {/* Certifications */}
+              <NewSectionRenderer 
+                sectionType="certifications" 
+                title="Certifications" 
+                icon={Trophy}
+                hasHyperlinks={true}
+              />
+
+              {/* Research Papers */}
+              <NewSectionRenderer 
+                sectionType="researchPapers" 
+                title="Research Papers" 
+                icon={FileText}
+                hasHyperlinks={true}
+              />
+
+              {/* Volunteering */}
+              <NewSectionRenderer 
+                sectionType="volunteering" 
+                title="Volunteering" 
+                icon={User}
+                hasHyperlinks={false}
+              />
             </div>
           </div>
         </div>
