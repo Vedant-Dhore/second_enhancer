@@ -385,7 +385,6 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
     const currentState = sectionType === 'original' 
       ? (sectionStates[section] || 'original')
       : (newSectionStates[`${section}_${entryId}`] || 'original');
-    const currentState = sectionStates[section] || 'original';
     const isEditing = currentState === 'editing';
     
     const handleAction = (action: 'accept' | 'reject' | 'edit' | 'undo') => {
