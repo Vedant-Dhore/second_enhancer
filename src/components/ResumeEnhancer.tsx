@@ -309,30 +309,30 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
 
   // Enhanced suggestions for each section
   const getEnhancementSuggestions = () => {
-    const suggestions = getResumeData();
+    const suggestions = resumeData;
     return {
       education: {
-        original: resumeData.education,
+        original: suggestions.education,
         enhanced: suggestions.education.enhanced
       },
       summary: {
-        original: resumeData.summary,
+        original: suggestions.summary,
         enhanced: suggestions.summary.enhanced
       },
       experience: {
-        original: resumeData.experience,
+        original: suggestions.experience,
         enhanced: suggestions.experience.enhanced
       },
       projects: {
-        original: resumeData.projects,
+        original: suggestions.projects,
         enhanced: suggestions.projects.enhanced
       },
       skills: {
-        original: resumeData.skills,
+        original: suggestions.skills,
         enhanced: [...resumeData.skills, ...suggestions.skills.suggested]
       },
       achievements: {
-        original: resumeData.achievements,
+        original: suggestions.achievements,
         enhanced: suggestions.achievements.enhanced
       }
     };
