@@ -305,8 +305,6 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
     return candidateSpecificSuggestions[candidate?.id || '1'] || candidateSpecificSuggestions['1'];
   };
 
-  const resumeData = candidateResumes[candidate.id] || candidateResumes['1'];
-
   // Enhanced suggestions for each section
   const getEnhancementSuggestions = () => {
     const suggestions = resumeData;
