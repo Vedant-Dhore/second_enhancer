@@ -456,7 +456,7 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
     return getOriginalResumeData();
   };
 
-  const resumeData = getDisplayResumeData();
+  const updatedResumeData = getDisplayResumeData();
 
   const ActionButtons: React.FC<{ section: string }> = ({ section }) => {
     const currentState = sectionStates[section] || 'original';
