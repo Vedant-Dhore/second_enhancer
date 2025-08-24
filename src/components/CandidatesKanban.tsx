@@ -88,11 +88,11 @@ const CandidatesKanban: React.FC = () => {
 
   // Function to get current fitment score (including any in-progress enhancements)
   const getCurrentFitmentScore = (candidate: Candidate) => {
-    const savedStates = localStorage.getItem(`enhancement_states_${candidate.id}`);
-    if (savedStates) {
+    const savedProgress = localStorage.getItem(`fitment_progress_${candidate.id}`);
+    if (savedProgress) {
       try {
-        const { currentFitmentScore } = JSON.parse(savedStates);
-        return currentFitmentScore || candidate.fitmentScore;
+        const { currentScore } = JSON.parse(savedProgress);
+        return currentScore;
       } catch (error) {
         return candidate.fitmentScore;
       }

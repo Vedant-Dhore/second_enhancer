@@ -31,55 +31,8 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
   const [sectionScoreImpacts, setSectionScoreImpacts] = useState<{[key: string]: number}>({});
   const [selectedSkills, setSelectedSkills] = useState<{[key: string]: boolean}>({});
 
-  // Load saved enhancement state on component mount
-  useEffect(() => {
-    if (candidate) {
-      // Load saved section states
-      const savedStates = localStorage.getItem(`enhancement_states_${candidate.id}`);
-      if (savedStates) {
-        try {
-          const states = JSON.parse(savedStates);
-          setSectionStates(states.sectionStates || {});
-          setEditingContent(states.editingContent || {});
-          setSelectedSkills(states.selectedSkills || {});
-          setProjectHyperlinks(states.projectHyperlinks || {});
-          
-          // Recalculate fitment score based on saved states
-          let calculatedScore = candidate.fitmentScore;
-          Object.entries(states.sectionStates || {}).forEach(([section, state]) => {
-            if (state === 'accepted') {
-              calculatedScore += sectionScoreImpacts[section] || 0;
-            }
-          });
-          
-          // Add skill selection impacts
-          Object.entries(states.selectedSkills || {}).forEach(([skill, selected]) => {
-            if (selected) calculatedScore += 1;
-          });
-          
-          setCurrentFitmentScore(calculatedScore);
-        } catch (error) {
-          console.error('Error loading saved enhancement states:', error);
-        }
-      }
-    }
-  }, [candidate]);
-
   // Get resume data for the candidate
   const getResumeData = () => {
-    // Check if there's an enhanced resume saved
-    if (candidate) {
-      const enhancedResumeData = localStorage.getItem(`enhanced_resume_${candidate.id}`);
-      if (enhancedResumeData) {
-        try {
-          return JSON.parse(enhancedResumeData);
-        } catch (error) {
-          console.error('Error loading enhanced resume:', error);
-        }
-      }
-    }
-    
-    // Fall back to original resume data
     if (!candidate) {
       return {
         name: "Sample Candidate",
@@ -243,9 +196,6 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
         return newContent;
       });
     }
-    
-    // Save state changes immediately
-    saveEnhancementState();
   };
 
   const handleSkillToggle = (skill: string) => {
@@ -263,9 +213,6 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
     } else {
       setCurrentFitmentScore(prev => Math.max(0, prev - 1));
     }
-    
-    // Save state changes immediately
-    setTimeout(saveEnhancementState, 100);
   };
 
   const handleSaveEdit = (section: string) => {
@@ -282,9 +229,6 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
       delete newContent[section];
       return newContent;
     });
-    
-    // Save state changes immediately
-    saveEnhancementState();
   };
 
   const handleSectionEdit = (section: string, newContent: any) => {
@@ -296,167 +240,25 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
       ...prev,
       [`project_${projectIndex}`]: hyperlink
     }));
-    
-    // Save state changes immediately
-    setTimeout(saveEnhancementState, 100);
-  };
-
-  // Save enhancement state to localStorage
-  const saveEnhancementState = () => {
-    if (!candidate) return;
-    
-    const stateToSave = {
-      sectionStates,
-      editingContent,
-      selectedSkills,
-      projectHyperlinks,
-      currentFitmentScore,
-      timestamp: Date.now()
-    };
-    
-    localStorage.setItem(`enhancement_states_${candidate.id}`, JSON.stringify(stateToSave));
   };
 
   const handleSaveEnhancements = () => {
     if (candidate && onSave) {
-      // Build enhanced resume with all accepted/edited changes
-      const baseResume = getOriginalResumeData();
-      const enhancedResume = { ...baseResume };
+      const enhancedResume = {
+        ...resumeData,
+        education: sectionStates.education === 'accepted' ? enhancedSections.education?.enhanced : resumeData.education,
+        summary: sectionStates.summary === 'accepted' ? enhancedSections.summary?.enhanced : resumeData.summary,
+        experience: sectionStates.experience === 'accepted' ? enhancedSections.experience?.enhanced : resumeData.experience,
+        projects: sectionStates.projects === 'accepted' ? enhancedSections.projects?.enhanced : resumeData.projects,
+        skills: sectionStates.skills === 'accepted' ? enhancedSections.skills?.enhanced : resumeData.skills,
+        achievements: sectionStates.achievements === 'accepted' ? enhancedSections.achievements?.enhanced : resumeData.achievements,
+        projectHyperlinks: projectHyperlinks
+      };
       
-      // Apply section enhancements
-      Object.entries(sectionStates).forEach(([section, state]) => {
-        if (state === 'accepted') {
-          if (section === 'education') {
-            enhancedResume.education = enhancedSections.education?.enhanced || baseResume.education;
-          } else if (section === 'summary') {
-            enhancedResume.summary = enhancedSections.summary?.enhanced || baseResume.summary;
-          } else if (section === 'experience') {
-            enhancedResume.experience = enhancedSections.experience?.enhanced || baseResume.experience;
-          } else if (section === 'projects') {
-            enhancedResume.projects = enhancedSections.projects?.enhanced || baseResume.projects;
-          } else if (section === 'achievements') {
-            enhancedResume.achievements = enhancedSections.achievements?.enhanced || baseResume.achievements;
-          }
-        }
-      });
-      
-      // Apply skill enhancements
-      const enhancedSkills = [...baseResume.skills];
-      if (enhancedSections.skills) {
-        enhancedSections.skills.enhanced
-          .filter((skill: string) => !baseResume.skills.includes(skill) && selectedSkills[skill])
-          .forEach((skill: string) => {
-            if (!enhancedSkills.includes(skill)) {
-              enhancedSkills.push(skill);
-            }
-          });
-      }
-      enhancedResume.skills = enhancedSkills;
-      
-      // Add project hyperlinks
-      enhancedResume.projectHyperlinks = projectHyperlinks;
-      
-      // Save the complete enhanced resume
-      localStorage.setItem(`enhanced_resume_${candidate.id}`, JSON.stringify(enhancedResume));
-      
-      // Save the current enhancement states
-      saveEnhancementState();
-      
-      // Update candidate fitment score and skills in context
-      if (enhancedSkills.length > baseResume.skills.length) {
-        onSave(candidate.id, currentFitmentScore, enhancedSkills);
-      } else {
-        onSave(candidate.id, currentFitmentScore);
-      }
+      onSave(candidate.id, currentFitmentScore, enhancedResume);
     }
     onClose();
   };
-  
-  // Get original resume data (not enhanced)
-  const getOriginalResumeData = () => {
-    const candidateResumes: { [key: string]: any } = {
-      '1': {
-        name: "Janhavi Sharma",
-        email: "janhavi.sharma@email.com",
-        contact: "+91 9876543210",
-        linkedin: "linkedin.com/in/janhavisharma",
-        github: "",
-        education: "Bachelor of Computer Science, Pune University (2021-2025)",
-        summary: "Computer Science student with experience in web development and programming.",
-        experience: [
-          "Developed a Blood Bank Management System using Java and MySQL",
-          "Created responsive web interfaces using HTML, CSS, and JavaScript"
-        ],
-        skills: ["Java", "React", "SQL"],
-        projects: [
-          "Blood Bank Management System - Java application with database integration",
-          "E-commerce Website - Frontend development with responsive design"
-        ],
-        achievements: [
-          "Dean's List for 2 consecutive semesters",
-          "Winner of College Technical Fest 2023"
-        ]
-      },
-      '2': {
-        name: "Aarya Ranpise",
-        email: "aarya123r@email.com",
-        contact: "+91 9856543211",
-        linkedin: "linkedin.com/in/ranpiseaarya",
-        github: "github.com/aarya",
-        education: "Bachelor of Technology, MIT WPU (2021-2025)",
-        summary: "Computer Science student with experience in web development and programming.",
-        experience: [
-          "Built web applications using Python and Django framework",
-          "Created responsive web interfaces using HTML, CSS, and JavaScript"
-        ],
-        skills: ["Python", "Django", "HTML", "CSS"],
-        projects: [
-          "Library Management System - Python Django application",
-          "Personal Portfolio Website - Frontend development with responsive design"
-        ],
-        achievements: [
-          "Certificate of Merit in Academics for 2 years",
-          "IBM - Java certification course"
-        ]
-      }
-    };
-
-    return candidateResumes[candidate?.id || '1'] || candidateResumes['1'];
-  };
-
-  // Function to get current fitment score (including any in-progress enhancements)
-  const getCurrentFitmentScore = () => {
-    const savedStates = localStorage.getItem(`enhancement_states_${candidate?.id}`);
-    if (savedStates) {
-      try {
-        const { currentFitmentScore: savedScore } = JSON.parse(savedStates);
-        return savedScore || currentFitmentScore;
-      } catch (error) {
-        return currentFitmentScore;
-      }
-    }
-    return currentFitmentScore;
-  };
-
-  // Update the displayed resume data to use enhanced version if available
-  const getDisplayResumeData = () => {
-    if (candidate) {
-      const enhancedResumeData = localStorage.getItem(`enhanced_resume_${candidate.id}`);
-      if (enhancedResumeData) {
-        try {
-          const enhanced = JSON.parse(enhancedResumeData);
-          // Merge with original data to ensure all fields are present
-          const original = getOriginalResumeData();
-          return { ...original, ...enhanced };
-        } catch (error) {
-          console.error('Error loading enhanced resume:', error);
-        }
-      }
-    }
-    return getOriginalResumeData();
-  };
-
-  const updatedResumeData = getDisplayResumeData();
 
   const ActionButtons: React.FC<{ section: string }> = ({ section }) => {
     const currentState = sectionStates[section] || 'original';
