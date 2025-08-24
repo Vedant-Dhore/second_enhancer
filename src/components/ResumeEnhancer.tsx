@@ -29,7 +29,6 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
   const [editingContent, setEditingContent] = useState<{[key: string]: any}>({});
   const [projectHyperlinks, setProjectHyperlinks] = useState<{[key: string]: string}>({});
   const [sectionScoreImpacts, setSectionScoreImpacts] = useState<{[key: string]: number}>({});
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
   // Get resume data for the candidate
   const getResumeData = () => {
@@ -416,16 +415,6 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
     }));
   };
 
-  const handleSkillToggle = (skill: string, isSelected: boolean) => {
-    if (isSelected) {
-      setSelectedSkills(prev => [...prev, skill]);
-      setCurrentFitmentScore(prev => Math.min(100, prev + 1));
-    } else {
-      setSelectedSkills(prev => prev.filter(s => s !== skill));
-      setCurrentFitmentScore(prev => Math.max(0, prev - 1));
-    }
-  };
-
   const handleSaveEnhancements = () => {
     if (candidate && onSave) {
       const enhancedResume = {
@@ -434,7 +423,7 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
         summary: sectionStates.summary === 'accepted' ? enhancedSections.summary?.enhanced : resumeData.summary,
         experience: sectionStates.experience === 'accepted' ? enhancedSections.experience?.enhanced : resumeData.experience,
         projects: sectionStates.projects === 'accepted' ? enhancedSections.projects?.enhanced : resumeData.projects,
-        skills: [...resumeData.skills, ...selectedSkills],
+        skills: sectionStates.skills === 'accepted' ? enhancedSections.skills?.enhanced : resumeData.skills,
         achievements: sectionStates.achievements === 'accepted' ? enhancedSections.achievements?.enhanced : resumeData.achievements,
         projectHyperlinks: projectHyperlinks
       };
@@ -870,44 +859,19 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                   <h3 className="font-semibold text-gray-900">Skills</h3>
                   {getStatusBadge('skills')}
                 </div>
-                
-                {/* Current Skills */}
-                <div className="mb-4">
-                  <div className="flex flex-wrap gap-2">
-                    {resumeData.skills.map((skill: string, index: number) => (
-                      <span key={index} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
-                        {skill}
-                      </span>
-                    ))}
-                    {selectedSkills.map((skill: string, index: number) => (
-                      <span key={`selected-${index}`} className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Suggested Skills to Add */}
                 {enhancedSections.skills && (
                   <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    <div className="mb-3">
+                    <div className="mb-2">
                       <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Suggested Skills to Add</span>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {enhancedSections.skills.suggested.map((skill: string, index: number) => (
-                        <label key={index} className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={selectedSkills.includes(skill)}
-                            onChange={(e) => handleSkillToggle(skill, e.target.checked)}
-                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                          />
-                          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
-                            {skill}
-                          </span>
-                        </label>
+                    <div className={`flex flex-wrap gap-2 mb-3 ${sectionStates.skills === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                      {enhancedSections.skills.enhanced.map((skill: string, index: number) => (
+                        <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
+                          {skill}
+                        </span>
                       ))}
                     </div>
+                    <ActionButtons section="skills" />
                   </div>
                 )}
               </div>
