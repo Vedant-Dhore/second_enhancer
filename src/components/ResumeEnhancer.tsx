@@ -29,6 +29,7 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
   const [editingContent, setEditingContent] = useState<{[key: string]: any}>({});
   const [projectHyperlinks, setProjectHyperlinks] = useState<{[key: string]: string}>({});
   const [sectionScoreImpacts, setSectionScoreImpacts] = useState<{[key: string]: number}>({});
+  const [selectedSkills, setSelectedSkills] = useState<{[key: string]: boolean}>({});
 
   // Get resume data for the candidate
   const getResumeData = () => {
@@ -194,6 +195,23 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
         delete newContent[section];
         return newContent;
       });
+    }
+  };
+
+  const handleSkillToggle = (skill: string) => {
+    const isCurrentlySelected = selectedSkills[skill] || false;
+    const newSelectedState = !isCurrentlySelected;
+    
+    setSelectedSkills(prev => ({
+      ...prev,
+      [skill]: newSelectedState
+    }));
+    
+    // Update fitment score (+1% for select, -1% for deselect)
+    if (newSelectedState) {
+      setCurrentFitmentScore(prev => Math.min(100, prev + 1));
+    } else {
+      setCurrentFitmentScore(prev => Math.max(0, prev - 1));
     }
   };
 
@@ -666,21 +684,57 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                 <div className="flex items-center space-x-2 mb-3">
                   <Code className="w-4 h-4 text-blue-600" />
                   <h3 className="font-semibold text-gray-900">Skills</h3>
-                  {getStatusBadge('skills')}
                 </div>
+                
+                {/* Current Skills */}
+                <div className="mb-4">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Current Skills</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {resumeData.skills.map((skill: string, index: number) => (
+                      <span key={index} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
+                        {skill}
+                      </span>
+                    ))}
+                    {/* Show selected additional skills */}
+                    {enhancedSections.skills && enhancedSections.skills.enhanced
+                      .filter((skill: string) => !resumeData.skills.includes(skill) && selectedSkills[skill])
+                      .map((skill: string, index: number) => (
+                        <span key={`new-${index}`} className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium">
+                          {skill} ✓
+                        </span>
+                      ))}
+                  </div>
+                </div>
+                
+                {/* Suggested Additional Skills */}
                 {enhancedSections.skills && (
                   <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                     <div className="mb-2">
-                      <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Suggested Skills to Add</span>
+                      <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                        Suggested Additional Skills
+                      </span>
                     </div>
-                    <div className={`flex flex-wrap gap-2 mb-3 ${sectionStates.skills === 'rejected' ? 'line-through opacity-60' : ''}`}>
-                      {enhancedSections.skills.enhanced.map((skill: string, index: number) => (
-                        <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
-                          {skill}
-                        </span>
+                    <div className="flex flex-wrap gap-2">
+                      {enhancedSections.skills.enhanced
+                        .filter((skill: string) => !resumeData.skills.includes(skill))
+                        .map((skill: string, index: number) => (
+                        <label key={index} className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={selectedSkills[skill] || false}
+                            onChange={() => handleSkillToggle(skill)}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className={`px-2 py-1 rounded text-sm transition-colors ${
+                            selectedSkills[skill] 
+                              ? 'bg-green-100 text-green-800 font-medium' 
+                              : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {skill}
+                          </span>
+                        </label>
                       ))}
                     </div>
-                    <ActionButtons section="skills" />
                   </div>
                 )}
               </div>
