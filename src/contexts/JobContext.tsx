@@ -245,7 +245,7 @@ const mockCandidates: Candidate[] = [
     stage: 'fitment',
     status: 'High Potential',
     skills: ['Java', 'React', 'SQL'],
-    fitmentScore: 85,
+    fitmentScore: 80,
     fitmentSummary: 'Strong technical skills in Java and React, perfect match for internship role',
     profileImage: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
     statusColor: 'green'
