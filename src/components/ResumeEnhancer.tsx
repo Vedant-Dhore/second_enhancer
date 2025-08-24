@@ -358,13 +358,16 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
           </div>
         </div>
 
-              <button
-                onClick={handleSaveEnhancements}
-                className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm"
-              >
-                Save Enhanced Resume
-              </button>
-            </div>
+        {/* Save Button */}
+        <div className="px-6 pb-4 border-b border-gray-200">
+          <div className="flex justify-end">
+            <button
+              onClick={handleSaveEnhancements}
+              className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm"
+            >
+              Save Enhanced Resume
+            </button>
+          </div>
         </div>
 
         {/* Resume Comparison */}
