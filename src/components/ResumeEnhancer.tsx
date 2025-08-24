@@ -457,12 +457,6 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
   };
 
   const resumeData = getDisplayResumeData();
-      };
-      
-      onSave(candidate.id, currentFitmentScore, enhancedResume);
-    }
-    onClose();
-  };
 
   const ActionButtons: React.FC<{ section: string }> = ({ section }) => {
     const currentState = sectionStates[section] || 'original';
