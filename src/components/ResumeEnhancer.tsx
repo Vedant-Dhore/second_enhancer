@@ -305,32 +305,34 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
     return candidateSpecificSuggestions[candidate?.id || '1'] || candidateSpecificSuggestions['1'];
   };
 
+  const resumeData = candidateResumes[candidate.id] || candidateResumes['1'];
+
   // Enhanced suggestions for each section
   const getEnhancementSuggestions = () => {
-    const suggestions = resumeData;
+    const suggestions = getResumeData();
     return {
       education: {
-        original: suggestions.education,
+        original: resumeData.education,
         enhanced: suggestions.education.enhanced
       },
       summary: {
-        original: suggestions.summary,
+        original: resumeData.summary,
         enhanced: suggestions.summary.enhanced
       },
       experience: {
-        original: suggestions.experience,
+        original: resumeData.experience,
         enhanced: suggestions.experience.enhanced
       },
       projects: {
-        original: suggestions.projects,
+        original: resumeData.projects,
         enhanced: suggestions.projects.enhanced
       },
       skills: {
-        original: suggestions.skills,
+        original: resumeData.skills,
         enhanced: [...resumeData.skills, ...suggestions.skills.suggested]
       },
       achievements: {
-        original: suggestions.achievements,
+        original: resumeData.achievements,
         enhanced: suggestions.achievements.enhanced
       }
     };
