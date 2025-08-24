@@ -306,37 +306,12 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
     return candidateSpecificSuggestions[candidate?.id || '1'] || candidateSpecificSuggestions['1'];
   };
 
-  const resumeData = candidateResumes[candidate.id] || candidateResumes['1'];
+  const resumeData = candidateResumes[candidate?.id || '1'] || candidateResumes['1'];
 
   // Enhanced suggestions for each section
   const getEnhancementSuggestions = () => {
     const suggestions = getResumeData();
-    return {
-      education: {
-        original: resumeData.education,
-        enhanced: suggestions.education.enhanced
-      },
-      summary: {
-        original: resumeData.summary,
-        enhanced: suggestions.summary.enhanced
-      },
-      experience: {
-        original: resumeData.experience,
-        enhanced: suggestions.experience.enhanced
-      },
-      projects: {
-        original: resumeData.projects,
-        enhanced: suggestions.projects.enhanced
-      },
-      skills: {
-        original: resumeData.skills,
-        enhanced: [...resumeData.skills, ...suggestions.skills.suggested]
-      },
-      achievements: {
-        original: resumeData.achievements,
-        enhanced: suggestions.achievements.enhanced
-      }
-    };
+    return suggestions;
   };
 
   // Initialize enhancements on component mount
@@ -449,6 +424,7 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
         experience: sectionStates.experience === 'accepted' ? enhancedSections.experience?.enhanced : resumeData.experience,
         projects: sectionStates.projects === 'accepted' ? enhancedSections.projects?.enhanced : resumeData.projects,
         skills: sectionStates.skills === 'accepted' ? enhancedSections.skills?.enhanced : resumeData.skills,
+        enhancedSkills: [...resumeData.skills, ...selectedSkills], // Include both original and selected skills
         achievements: sectionStates.achievements === 'accepted' ? enhancedSections.achievements?.enhanced : resumeData.achievements,
         projectHyperlinks: projectHyperlinks
       };
@@ -882,21 +858,43 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                 <div className="flex items-center space-x-2 mb-3">
                   <Code className="w-4 h-4 text-blue-600" />
                   <h3 className="font-semibold text-gray-900">Skills</h3>
-                  {getStatusBadge('skills')}
                 </div>
-                {enhancedSections.skills && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {resumeData.skills.map((skill: string, index: number) => (
+                    <span key={index} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
+                      {skill}
+                    </span>
+                  ))}
+                  {selectedSkills.map((skill: string, index: number) => (
+                    <span key={`selected-${index}`} className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+                {enhancedSections.skills?.suggested && (
                   <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                     <div className="mb-2">
-                      <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Suggested Skills to Add</span>
+                      <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Suggested Skills</span>
                     </div>
-                    <div className={`flex flex-wrap gap-2 mb-3 ${sectionStates.skills === 'rejected' ? 'line-through opacity-60' : ''}`}>
-                      {enhancedSections.skills.enhanced.map((skill: string, index: number) => (
-                        <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
-                          {skill}
-                        </span>
+                    <div className="flex flex-wrap gap-2">
+                      {enhancedSections.skills.suggested.map((skill: string, index: number) => (
+                        <label key={index} className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={selectedSkills.includes(skill)}
+                            onChange={() => handleSkillToggle(skill)}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className={`px-2 py-1 rounded text-sm transition-colors ${
+                            selectedSkills.includes(skill) 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {skill}
+                          </span>
+                        </label>
                       ))}
                     </div>
-                    <ActionButtons section="skills" />
                   </div>
                 )}
               </div>
