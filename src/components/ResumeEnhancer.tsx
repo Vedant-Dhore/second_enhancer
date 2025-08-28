@@ -252,4 +252,4 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
       original: resumeData.experience,
       enhanced: [
         "• Developed a Blood Bank Management System using Java and MySQL, implementing secure authentication, inventory tracking, and donor management features with responsive UI design",
-        "• Created responsive web interfaces using HTML, CSS, and JavaScript, optimizing user
+        "• Created responsive web interfaces using HTML, CSS, and JavaScript, optimizing user experience and implementing cross-browser compatibility"
