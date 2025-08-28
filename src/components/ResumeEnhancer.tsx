@@ -838,7 +838,13 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
         {/* Save Button - Only show for Quick Enhancement */}
         {activeTab === 'quick' && (
           <div className="px-6 pb-0 border-b border-gray-200">
-          <div className="flex justify-end">
+          <div className="flex justify-end space-x-4">
+            <button
+              onClick={handleDownloadEnhancedResume}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Download Enhanced Resume
+            </button>
             <button
               onClick={handleSaveEnhancements}
               className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm"
@@ -1311,12 +1317,6 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
                   <div className="flex justify-between mt-8">
                     <button className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
                       Skip for Now
-                <button
-                  onClick={handleDownloadEnhancedResume}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Download Enhanced Resume
-                </button>
                     </button>
                     <button className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm">
                       Submit Answers
