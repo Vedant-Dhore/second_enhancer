@@ -28,7 +28,15 @@ const ResumeViewer: React.FC<ResumeViewerProps> = ({ candidate, onClose }) => {
     const enhancedResumeData = localStorage.getItem(`enhanced_resume_${candidate.id}`);
     if (enhancedResumeData) {
       try {
-        return JSON.parse(enhancedResumeData);
+        const parsedData = JSON.parse(enhancedResumeData);
+        // Ensure we have all required fields
+        return {
+          ...parsedData,
+          skills: parsedData.skills || [],
+          projects: parsedData.projects || [],
+          achievements: parsedData.achievements || [],
+          experience: parsedData.experience || []
+        };
       } catch (error) {
         console.error('Error loading enhanced resume:', error);
       }
@@ -174,6 +182,9 @@ const ResumeViewer: React.FC<ResumeViewerProps> = ({ candidate, onClose }) => {
   };
 
   const resumeData = getResumeData();
+  
+  // Check if this is an enhanced resume
+  const isEnhancedResume = localStorage.getItem(`enhanced_resume_${candidate.id}`) !== null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -190,11 +201,18 @@ const ResumeViewer: React.FC<ResumeViewerProps> = ({ candidate, onClose }) => {
             <div className="flex items-center space-x-2">
               <FileText className="w-6 h-6 text-blue-600" />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Resume</h1>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {isEnhancedResume ? 'Enhanced Resume' : 'Resume'}
+                </h1>
                 <p className="text-gray-600">{resumeData.name}</p>
               </div>
             </div>
           </div>
+          {isEnhancedResume && (
+            <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+              Enhanced Version
+            </div>
+          )}
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -284,9 +302,16 @@ const ResumeViewer: React.FC<ResumeViewerProps> = ({ candidate, onClose }) => {
               {resumeData.skills.map((skill: string, index: number) => (
                 <span
                   key={index}
-                  className="bg-blue-100 text-blue-800 px-3 py-2 rounded-full text-sm font-medium"
+                  className={`px-3 py-2 rounded-full text-sm font-medium ${
+                    isEnhancedResume && index >= (candidate.skills?.length || 0)
+                      ? 'bg-green-100 text-green-800 border border-green-300'
+                      : 'bg-blue-100 text-blue-800'
+                  }`}
                 >
                   {skill}
+                  {isEnhancedResume && index >= (candidate.skills?.length || 0) && (
+                    <span className="ml-1 text-xs">✨</span>
+                  )}
                 </span>
               ))}
             </div>
@@ -300,8 +325,15 @@ const ResumeViewer: React.FC<ResumeViewerProps> = ({ candidate, onClose }) => {
             </div>
             <div className="space-y-3">
               {resumeData.projects.map((project: string, index: number) => (
-                <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                <div key={index} className={`p-4 rounded-lg ${
+                  isEnhancedResume && project.includes('Full-stack') && project.includes('RESTful')
+                    ? 'bg-green-50 border border-green-200'
+                    : 'bg-gray-50'
+                }`}>
                   <p className="text-gray-700">• {project}</p>
+                  {isEnhancedResume && project.includes('Full-stack') && project.includes('RESTful') && (
+                    <span className="text-xs text-green-600 font-medium ml-2">Enhanced ✨</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -315,8 +347,15 @@ const ResumeViewer: React.FC<ResumeViewerProps> = ({ candidate, onClose }) => {
             </div>
             <div className="space-y-3">
               {resumeData.achievements.map((achievement: string, index: number) => (
-                <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                <div key={index} className={`p-4 rounded-lg ${
+                  isEnhancedResume && achievement.includes('Oracle') && achievement.includes('Certified')
+                    ? 'bg-green-50 border border-green-200'
+                    : 'bg-gray-50'
+                }`}>
                   <p className="text-gray-700">• {achievement}</p>
+                  {isEnhancedResume && achievement.includes('Oracle') && achievement.includes('Certified') && (
+                    <span className="text-xs text-green-600 font-medium ml-2">New ✨</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -327,17 +366,18 @@ const ResumeViewer: React.FC<ResumeViewerProps> = ({ candidate, onClose }) => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  {localStorage.getItem(`enhanced_resume_${candidate.id}`) ? 'Enhanced' : 'Current'} Fitment Score
+                  {isEnhancedResume ? 'Enhanced' : 'Current'} Fitment Score
                 </h3>
                 <p className="text-sm text-gray-600">For Intern Software Developer position</p>
               </div>
               <div className="text-right">
                 <div className="text-3xl font-bold text-purple-600">
                   {(() => {
-                    const savedEnhancements = localStorage.getItem(`resume_enhancements_${candidate.id}`);
-                    if (savedEnhancements) {
+                    const saveKey = `resume_enhancements_${candidate.id}_default`;
+                    const savedData = localStorage.getItem(saveKey);
+                    if (savedData) {
                       try {
-                        const { fitmentScore } = JSON.parse(savedEnhancements);
+                        const { fitmentScore } = JSON.parse(savedData);
                         return `${fitmentScore}%`;
                       } catch (error) {
                         return `${candidate.fitmentScore}%`;
@@ -351,10 +391,11 @@ const ResumeViewer: React.FC<ResumeViewerProps> = ({ candidate, onClose }) => {
                     className="bg-purple-500 h-2 rounded-full transition-all duration-300"
                     style={{ 
                       width: `${(() => {
-                        const savedEnhancements = localStorage.getItem(`resume_enhancements_${candidate.id}`);
-                        if (savedEnhancements) {
+                        const saveKey = `resume_enhancements_${candidate.id}_default`;
+                        const savedData = localStorage.getItem(saveKey);
+                        if (savedData) {
                           try {
-                            const { fitmentScore } = JSON.parse(savedEnhancements);
+                            const { fitmentScore } = JSON.parse(savedData);
                             return fitmentScore;
                           } catch (error) {
                             return candidate.fitmentScore;

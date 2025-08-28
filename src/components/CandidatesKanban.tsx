@@ -20,13 +20,14 @@ interface Candidate {
 }
 
 const CandidatesKanban: React.FC = () => {
-  const { selectedJobId, getCandidatesForJob, updateCandidateFitment } = useJob();
+  const { selectedJobId, getCandidatesForJob, updateCandidateFitment, getSelectedJob } = useJob();
   const [selectedCandidate, setSelectedCandidate] = React.useState<Candidate | null>(null);
   const [showResumeEnhancer, setShowResumeEnhancer] = React.useState(false);
   const [showResumeViewer, setShowResumeViewer] = React.useState(false);
   const [candidateMenuOpen, setCandidateMenuOpen] = React.useState<string | null>(null);
   
   const candidates = selectedJobId ? getCandidatesForJob(selectedJobId) : [];
+  const selectedJob = getSelectedJob();
   
   const getCandidatesByStage = (stage: string) => 
     candidates.filter(candidate => candidate.stage === stage);
@@ -72,27 +73,17 @@ const CandidatesKanban: React.FC = () => {
       updateCandidateFitment(candidateId, newScore);
     }
     
-    // Save enhanced resume data for later viewing
-    if (enhancedResume) {
-      localStorage.setItem(`enhanced_resume_${candidateId}`, JSON.stringify(enhancedResume));
-    }
-    
-    // Save the enhancement progress for real-time updates
-    localStorage.setItem(`fitment_progress_${candidateId}`, JSON.stringify({
-      currentScore: newScore,
-      timestamp: Date.now()
-    }));
-    
     console.log(`Updated ${candidateId} fitment score to ${newScore}%`);
   };
 
   // Function to get current fitment score (including any in-progress enhancements)
   const getCurrentFitmentScore = (candidate: Candidate) => {
-    const savedProgress = localStorage.getItem(`fitment_progress_${candidate.id}`);
-    if (savedProgress) {
+    const saveKey = `resume_enhancements_${candidate.id}_${selectedJob?.id || 'default'}`;
+    const savedData = localStorage.getItem(saveKey);
+    if (savedData) {
       try {
-        const { currentScore } = JSON.parse(savedProgress);
-        return currentScore;
+        const parsedData = JSON.parse(savedData);
+        return parsedData.fitmentScore || candidate.fitmentScore;
       } catch (error) {
         return candidate.fitmentScore;
       }
@@ -244,6 +235,7 @@ const CandidatesKanban: React.FC = () => {
       {showResumeEnhancer && selectedCandidate && (
         <ResumeEnhancer 
           candidate={selectedCandidate}
+          jobId={selectedJob?.id}
           onSave={handleSaveEnhancements}
           onClose={() => {
             setShowResumeEnhancer(false);
