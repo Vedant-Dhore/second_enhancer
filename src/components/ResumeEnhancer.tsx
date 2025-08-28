@@ -1339,8 +1339,12 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
                   </div>
 
                   <div className="flex justify-between mt-8">
-                    <button className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
-                      Skip for Now
+                    <button
+                      type="button"
+                      onClick={onClose}
+                      className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      Skip for now
                     </button>
                     <button className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm">
                       Submit Answers
