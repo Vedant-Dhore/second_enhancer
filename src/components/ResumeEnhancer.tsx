@@ -42,6 +42,69 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
   const [advancedAnswers, setAdvancedAnswers] = useState<{[key: string]: string}>({});
   
   // Calculate enhancement metrics
+  const handleDownloadEnhancedResume = () => {
+    const enhancedResumeData = {
+      ...resumeData,
+      // Apply all accepted enhancements
+      summary: sectionStates.summary === 'accepted' ? enhancedSections.summary : resumeData.summary,
+      education: sectionStates.education === 'accepted' ? enhancedSections.education : resumeData.education,
+      experience: sectionStates.experience === 'accepted' ? enhancedSections.experience : resumeData.experience,
+      projects: sectionStates.projects === 'accepted' ? enhancedSections.projects : resumeData.projects,
+      achievements: sectionStates.achievements === 'accepted' ? enhancedSections.achievements : resumeData.achievements,
+      skills: [...resumeData.skills, ...Array.from(selectedSkills)],
+      // Add new sections if they have accepted entries
+      certifications: Object.entries(newSections.certifications || {})
+        .filter(([id]) => newSectionStates[`certifications_${id}`] === 'accepted')
+        .map(([, content]) => content),
+      researchPapers: Object.entries(newSections.researchPapers || {})
+        .filter(([id]) => newSectionStates[`researchPapers_${id}`] === 'accepted')
+        .map(([, content]) => content),
+      volunteering: Object.entries(newSections.volunteering || {})
+        .filter(([id]) => newSectionStates[`volunteering_${id}`] === 'accepted')
+        .map(([, content]) => content)
+    };
+
+    // Create downloadable content
+    const resumeContent = `
+${enhancedResumeData.name}
+${enhancedResumeData.email} | ${enhancedResumeData.contact}
+${enhancedResumeData.linkedin}${enhancedResumeData.github ? ' | ' + enhancedResumeData.github : ''}
+
+SUMMARY
+${enhancedResumeData.summary}
+
+EDUCATION
+${enhancedResumeData.education}
+
+EXPERIENCE
+${enhancedResumeData.experience.map(exp => `• ${exp}`).join('\n')}
+
+TECHNICAL SKILLS
+${enhancedResumeData.skills.join(', ')}
+
+PROJECTS
+${enhancedResumeData.projects.map(project => `• ${project}`).join('\n')}
+
+ACHIEVEMENTS
+${enhancedResumeData.achievements.map(achievement => `• ${achievement}`).join('\n')}
+
+${enhancedResumeData.certifications?.length ? `CERTIFICATIONS\n${enhancedResumeData.certifications.map(cert => `• ${cert}`).join('\n')}\n` : ''}
+${enhancedResumeData.researchPapers?.length ? `RESEARCH PAPERS\n${enhancedResumeData.researchPapers.map(paper => `• ${paper}`).join('\n')}\n` : ''}
+${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.volunteering.map(vol => `• ${vol}`).join('\n')}\n` : ''}
+    `.trim();
+
+    // Create and download file
+    const blob = new Blob([resumeContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${enhancedResumeData.name.replace(/\s+/g, '_')}_Enhanced_Resume.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const getEnhancementMetrics = () => {
     const metrics: string[] = [];
     
@@ -1248,6 +1311,12 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
                   <div className="flex justify-between mt-8">
                     <button className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
                       Skip for Now
+                <button
+                  onClick={handleDownloadEnhancedResume}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Download Enhanced Resume
+                </button>
                     </button>
                     <button className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm">
                       Submit Answers
