@@ -40,6 +40,7 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
   const [newSectionHyperlinks, setNewSectionHyperlinks] = useState<{[key: string]: string}>({});
   const [activeTab, setActiveTab] = useState<'quick' | 'advanced'>('quick');
   const [advancedAnswers, setAdvancedAnswers] = useState<{[key: string]: string}>({});
+  const [isResumeEnhanced, setIsResumeEnhanced] = useState(false);
   
   // Calculate enhancement metrics
   const handleDownloadEnhancedResume = () => {
@@ -557,6 +558,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
       
       onSave(candidate.id, currentFitmentScore, enhancedResume);
     }
+    setIsResumeEnhanced(true);
     onClose();
   };
 
@@ -839,12 +841,34 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
         {activeTab === 'quick' && (
           <div className="px-6 pb-0 border-b border-gray-200">
           <div className="flex justify-end space-x-4">
-            <button
-              onClick={handleDownloadEnhancedResume}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Download Enhanced Resume
-            </button>
+            <div className="relative">
+              <button
+                onClick={isResumeEnhanced ? handleDownloadEnhancedResume : undefined}
+                disabled={!isResumeEnhanced}
+                className={`px-6 py-2 rounded-lg transition-colors ${
+                  isResumeEnhanced
+                    ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+                onMouseEnter={(e) => {
+                  if (!isResumeEnhanced) {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded whitespace-nowrap z-50';
+                    tooltip.textContent = 'First save the enhanced resume';
+                    tooltip.id = 'download-tooltip';
+                    e.currentTarget.parentElement?.appendChild(tooltip);
+                  }
+                }}
+                onMouseLeave={() => {
+                  const tooltip = document.getElementById('download-tooltip');
+                  if (tooltip) {
+                    tooltip.remove();
+                  }
+                }}
+              >
+                Download Enhanced Resume
+              </button>
+            </div>
             <button
               onClick={handleSaveEnhancements}
               className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm"
