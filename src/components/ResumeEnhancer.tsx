@@ -773,7 +773,7 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
 
         {/* Save Button - Only show for Quick Enhancement */}
         {activeTab === 'quick' && (
-          <div className="px-6 pb-4 border-b border-gray-200">
+          <div className="px-6 pb-6 border-b border-gray-200">
           <div className="flex justify-end">
             <button
               onClick={handleSaveEnhancements}
