@@ -771,19 +771,28 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
           </div>
         </div>
 
-        {/* Save Button - Only show for Quick Enhancement */}
+
+        {/* Save & Download Buttons - Only show for Quick Enhancement */}
         {activeTab === 'quick' && (
           <div className="px-6 pb-0 border-b border-gray-200">
-          <div className="flex justify-end">
-            <button
-              onClick={handleSaveEnhancements}
-              className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm"
-            >
-              Save Enhanced Resume
-            </button>
-          </div>
+            <div className="flex justify-end">
+              <button
+                onClick={handleSaveEnhancements}
+                className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm"
+              >
+                Save Enhanced Resume
+              </button>
+        
+              <button
+                onClick={handleDownloadResume}
+                className="ml-3 bg-gradient-to-r from-green-400 to-green-500 text-white px-6 py-2 rounded-lg hover:from-green-500 hover:to-green-600 transition-all duration-200 shadow-sm"
+              >
+                Download Enhanced Resume
+              </button>
+            </div>
           </div>
         )}
+
 
         {/* Tab Content */}
         <div className="p-6">
