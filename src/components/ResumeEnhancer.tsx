@@ -754,62 +754,62 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
   };
 
   
-    // return (
-    // <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    //   <div className="bg-white rounded-lg shadow-xl w-full max-w-7xl max-h-[95vh] overflow-y-auto">
-    //     {/* Header */}
-    //     <div className="flex items-center justify-between p-6 border-b border-gray-200">
-    //       <div className="flex items-center space-x-3">
-    //         <div className="bg-purple-100 p-2 rounded-lg">
-    //           <Wand2 className="w-6 h-6 text-purple-600" />
-    //         </div>
-    //         <div>
-    //           <h1 className="text-2xl font-bold text-gray-900">Resume Enhancer</h1>
-    //           <p className="text-gray-600">AI-powered resume optimization for better job fitment</p>
-    //         </div>
-    //       </div>
-    //       <div className="flex items-center space-x-4">
-    //         <div className="text-right">
-    //           <div className="text-sm text-gray-600">Current Fitment</div>
-    //           <div className="text-2xl font-bold text-purple-600">{currentFitmentScore}%</div>
-    //           {/* Progress Bar */}
-    //           <div className="w-24 bg-gray-200 rounded-full h-2 mt-2">
-    //             <div 
-    //               className="bg-purple-500 h-2 rounded-full transition-all duration-500"
-    //               style={{ width: `${currentFitmentScore}%` }}
-    //             ></div>
-    //           </div>
-    //         </div>
+    return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-7xl max-h-[95vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="bg-purple-100 p-2 rounded-lg">
+              <Wand2 className="w-6 h-6 text-purple-600" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Resume Enhancer</h1>
+              <p className="text-gray-600">AI-powered resume optimization for better job fitment</p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="text-right">
+              <div className="text-sm text-gray-600">Current Fitment</div>
+              <div className="text-2xl font-bold text-purple-600">{currentFitmentScore}%</div>
+              {/* Progress Bar */}
+              <div className="w-24 bg-gray-200 rounded-full h-2 mt-2">
+                <div 
+                  className="bg-purple-500 h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${currentFitmentScore}%` }}
+                ></div>
+              </div>
+            </div>
             
-    //         {/* Enhancement Metrics */}
-    //         {activeTab === 'quick' && (
-    //           <div className="text-right">
-    //           <div className="text-sm text-gray-600 mb-2">Enhancement Summary</div>
-    //           <div className="bg-gray-50 rounded-lg p-3 max-w-xs">
-    //             {getEnhancementMetrics().length > 0 ? (
-    //               <div className="space-y-1">
-    //                 {getEnhancementMetrics().map((metric, index) => (
-    //                   <div key={index} className="text-xs text-gray-700 flex items-center">
-    //                     <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-    //                     {metric}
-    //                   </div>
-    //                 ))}
-    //               </div>
-    //             ) : (
-    //               <div className="text-xs text-gray-500 italic">No enhancements accepted yet</div>
-    //             )}
-    //           </div>
-    //           </div>
-    //         )}
+            {/* Enhancement Metrics */}
+            {activeTab === 'quick' && (
+              <div className="text-right">
+              <div className="text-sm text-gray-600 mb-2">Enhancement Summary</div>
+              <div className="bg-gray-50 rounded-lg p-3 max-w-xs">
+                {getEnhancementMetrics().length > 0 ? (
+                  <div className="space-y-1">
+                    {getEnhancementMetrics().map((metric, index) => (
+                      <div key={index} className="text-xs text-gray-700 flex items-center">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                        {metric}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-xs text-gray-500 italic">No enhancements accepted yet</div>
+                )}
+              </div>
+              </div>
+            )}
             
-    //         <button
-    //           onClick={onClose}
-    //           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-    //         >
-    //           <X className="w-5 h-5 text-gray-500" />
-    //         </button>
-    //       </div>
-    //     </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
+          </div>
+        </div>
 
       
 
