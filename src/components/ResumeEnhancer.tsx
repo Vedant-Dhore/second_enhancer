@@ -858,7 +858,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
                 </button>
               </>
             ) : (
-              <div className="h-9" />  {/* placeholder to preserve row height */}
+              <div className="h-9" /> 
             )}
           </div>
         </div>
