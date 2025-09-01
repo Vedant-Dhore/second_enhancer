@@ -867,282 +867,267 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
         
         {/* Tab Content */}
         <div className="overflow-y-auto flex-1">
-        <div className="p-6">
-          {activeTab === 'quick' ? (
-            /* Quick Enhancement - Resume Comparison */
-          <div className="grid grid-cols-2 gap-8">
-            {/* Original Resume */}
-            <div>
-              <div className="flex items-center space-x-2 mb-6">
-                <FileText className="w-5 h-5 text-gray-600" />
-                <h2 className="text-xl font-bold text-gray-900">Original Resume</h2>
-              </div>
-
-              {/* Contact Info */}
-              <div className="mb-6 text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{resumeData.name}</h3>
-                <div className="space-y-1 text-sm text-gray-600">
-                  <div className="flex items-center justify-center space-x-2">
-                    <Mail className="w-4 h-4" />
-                    <span>{resumeData.email}</span>
-                  </div>
-                  <div className="flex items-center justify-center space-x-2">
-                    <Phone className="w-4 h-4" />
-                    <span>{resumeData.contact}</span>
-                  </div>
-                  <div className="flex items-center justify-center space-x-2">
-                    <Linkedin className="w-4 h-4" />
-                    <span>{resumeData.linkedin}</span>
-                  </div>
-                  {resumeData.github && (
+          <div className="p-6">
+            {activeTab === 'quick' ? (
+              /* Quick Enhancement - Resume Comparison */
+            <div className="grid grid-cols-2 gap-8">
+              {/* Original Resume */}
+              <div>
+                <div className="flex items-center space-x-2 mb-6">
+                  <FileText className="w-5 h-5 text-gray-600" />
+                  <h2 className="text-xl font-bold text-gray-900">Original Resume</h2>
+                </div>
+  
+                {/* Contact Info */}
+                <div className="mb-6 text-center">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{resumeData.name}</h3>
+                  <div className="space-y-1 text-sm text-gray-600">
                     <div className="flex items-center justify-center space-x-2">
-                      <Github className="w-4 h-4" />
-                      <span>{resumeData.github}</span>
+                      <Mail className="w-4 h-4" />
+                      <span>{resumeData.email}</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-2">
+                      <Phone className="w-4 h-4" />
+                      <span>{resumeData.contact}</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-2">
+                      <Linkedin className="w-4 h-4" />
+                      <span>{resumeData.linkedin}</span>
+                    </div>
+                    {resumeData.github && (
+                      <div className="flex items-center justify-center space-x-2">
+                        <Github className="w-4 h-4" />
+                        <span>{resumeData.github}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+  
+                {/* Education */}
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <GraduationCap className="w-4 h-4 text-blue-600" />
+                    <h3 className="font-semibold text-gray-900">Education</h3>
+                  </div>
+                  <p className="text-gray-700 text-sm">{resumeData.education}</p>
+                </div>
+  
+                {/* Summary */}
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <User className="w-4 h-4 text-blue-600" />
+                    <h3 className="font-semibold text-gray-900">Summary</h3>
+                  </div>
+                  <p className="text-gray-700 text-sm">{resumeData.summary}</p>
+                </div>
+  
+                {/* Experience */}
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Briefcase className="w-4 h-4 text-blue-600" />
+                    <h3 className="font-semibold text-gray-900">Experience</h3>
+                  </div>
+                  <div className="space-y-2">
+                    {resumeData.experience.map((exp: string, index: number) => (
+                      <p key={index} className="text-gray-700 text-sm">• {exp}</p>
+                    ))}
+                  </div>
+                </div>
+  
+                {/* Projects */}
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Code className="w-4 h-4 text-blue-600" />
+                    <h3 className="font-semibold text-gray-900">Projects</h3>
+                  </div>
+                  <div className="space-y-2">
+                    {resumeData.projects.map((project: string, index: number) => (
+                      <p key={index} className="text-gray-700 text-sm">• {project}</p>
+                    ))}
+                  </div>
+                </div>
+  
+                {/* Skills */}
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Code className="w-4 h-4 text-blue-600" />
+                    <h3 className="font-semibold text-gray-900">Skills</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {resumeData.skills.map((skill: string, index: number) => (
+                      <span key={index} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+  
+                {/* Achievements */}
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Trophy className="w-4 h-4 text-blue-600" />
+                    <h3 className="font-semibold text-gray-900">Achievements</h3>
+                  </div>
+                  <div className="space-y-2">
+                    {resumeData.achievements.map((achievement: string, index: number) => (
+                      <p key={index} className="text-gray-700 text-sm">• {achievement}</p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+  
+              {/* Enhanced Resume */}
+              <div>
+                <div className="flex items-center space-x-2 mb-6">
+                  <Sparkles className="w-5 h-5 text-purple-600" />
+                  <h2 className="text-xl font-bold text-gray-900">Enhanced Resume</h2>
+                </div>
+  
+                {/* Contact Info */}
+                <div className="mb-6 text-center">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{resumeData.name}</h3>
+                  <div className="space-y-1 text-sm text-gray-600">
+                    <div className="flex items-center justify-center space-x-2">
+                      <Mail className="w-4 h-4" />
+                      <span>{resumeData.email}</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-2">
+                      <Phone className="w-4 h-4" />
+                      <span>{resumeData.contact}</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-2">
+                      <Linkedin className="w-4 h-4" />
+                      <span>{resumeData.linkedin}</span>
+                    </div>
+                    {resumeData.github && (
+                      <div className="flex items-center justify-center space-x-2">
+                        <Github className="w-4 h-4" />
+                        <span>{resumeData.github}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+  
+                {/* Education */}
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <GraduationCap className="w-4 h-4 text-blue-600" />
+                    <h3 className="font-semibold text-gray-900">Education</h3>
+                    {getStatusBadge('education')}
+                  </div>
+                  {enhancedSections.education && (
+                    <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                      <div className="mb-2">
+                        <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Suggested Addition</span>
+                      </div>
+                      {sectionStates.education === 'editing' ? (
+                      <textarea
+                          value={editingContent.education || ''}
+                        onChange={(e) => handleSectionEdit('education', e.target.value)}
+                        className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
+                        rows={3}
+                      />
+                      ) : (
+                        <div className={`text-sm text-gray-700 ${sectionStates.education === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                          {enhancedSections.education.enhanced}
+                        </div>
+                      )}
+                      <ActionButtons section="education" />
                     </div>
                   )}
                 </div>
-              </div>
-
-              {/* Education */}
-              <div className="mb-6">
-                <div className="flex items-center space-x-2 mb-3">
-                  <GraduationCap className="w-4 h-4 text-blue-600" />
-                  <h3 className="font-semibold text-gray-900">Education</h3>
-                </div>
-                <p className="text-gray-700 text-sm">{resumeData.education}</p>
-              </div>
-
-              {/* Summary */}
-              <div className="mb-6">
-                <div className="flex items-center space-x-2 mb-3">
-                  <User className="w-4 h-4 text-blue-600" />
-                  <h3 className="font-semibold text-gray-900">Summary</h3>
-                </div>
-                <p className="text-gray-700 text-sm">{resumeData.summary}</p>
-              </div>
-
-              {/* Experience */}
-              <div className="mb-6">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Briefcase className="w-4 h-4 text-blue-600" />
-                  <h3 className="font-semibold text-gray-900">Experience</h3>
-                </div>
-                <div className="space-y-2">
-                  {resumeData.experience.map((exp: string, index: number) => (
-                    <p key={index} className="text-gray-700 text-sm">• {exp}</p>
-                  ))}
-                </div>
-              </div>
-
-              {/* Projects */}
-              <div className="mb-6">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Code className="w-4 h-4 text-blue-600" />
-                  <h3 className="font-semibold text-gray-900">Projects</h3>
-                </div>
-                <div className="space-y-2">
-                  {resumeData.projects.map((project: string, index: number) => (
-                    <p key={index} className="text-gray-700 text-sm">• {project}</p>
-                  ))}
-                </div>
-              </div>
-
-              {/* Skills */}
-              <div className="mb-6">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Code className="w-4 h-4 text-blue-600" />
-                  <h3 className="font-semibold text-gray-900">Skills</h3>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {resumeData.skills.map((skill: string, index: number) => (
-                    <span key={index} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Achievements */}
-              <div className="mb-6">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Trophy className="w-4 h-4 text-blue-600" />
-                  <h3 className="font-semibold text-gray-900">Achievements</h3>
-                </div>
-                <div className="space-y-2">
-                  {resumeData.achievements.map((achievement: string, index: number) => (
-                    <p key={index} className="text-gray-700 text-sm">• {achievement}</p>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Enhanced Resume */}
-            <div>
-              <div className="flex items-center space-x-2 mb-6">
-                <Sparkles className="w-5 h-5 text-purple-600" />
-                <h2 className="text-xl font-bold text-gray-900">Enhanced Resume</h2>
-              </div>
-
-              {/* Contact Info */}
-              <div className="mb-6 text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{resumeData.name}</h3>
-                <div className="space-y-1 text-sm text-gray-600">
-                  <div className="flex items-center justify-center space-x-2">
-                    <Mail className="w-4 h-4" />
-                    <span>{resumeData.email}</span>
+  
+                {/* Summary */}
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <User className="w-4 h-4 text-blue-600" />
+                    <h3 className="font-semibold text-gray-900">Summary</h3>
+                    {getStatusBadge('summary')}
                   </div>
-                  <div className="flex items-center justify-center space-x-2">
-                    <Phone className="w-4 h-4" />
-                    <span>{resumeData.contact}</span>
-                  </div>
-                  <div className="flex items-center justify-center space-x-2">
-                    <Linkedin className="w-4 h-4" />
-                    <span>{resumeData.linkedin}</span>
-                  </div>
-                  {resumeData.github && (
-                    <div className="flex items-center justify-center space-x-2">
-                      <Github className="w-4 h-4" />
-                      <span>{resumeData.github}</span>
+                  {enhancedSections.summary && (
+                    <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                      {sectionStates.summary === 'editing' ? (
+                      <textarea
+                          value={editingContent.summary || ''}
+                        onChange={(e) => handleSectionEdit('summary', e.target.value)}
+                        className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
+                        rows={4}
+                      />
+                      ) : (
+                        <div className={`text-sm text-gray-700 ${sectionStates.summary === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                          {enhancedSections.summary.enhanced}
+                        </div>
+                      )}
+                      <ActionButtons section="summary" />
                     </div>
                   )}
                 </div>
-              </div>
-
-              {/* Education */}
-              <div className="mb-6">
-                <div className="flex items-center space-x-2 mb-3">
-                  <GraduationCap className="w-4 h-4 text-blue-600" />
-                  <h3 className="font-semibold text-gray-900">Education</h3>
-                  {getStatusBadge('education')}
-                </div>
-                {enhancedSections.education && (
-                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    <div className="mb-2">
-                      <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Suggested Addition</span>
-                    </div>
-                    {sectionStates.education === 'editing' ? (
-                    <textarea
-                        value={editingContent.education || ''}
-                      onChange={(e) => handleSectionEdit('education', e.target.value)}
-                      className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
-                      rows={3}
-                    />
-                    ) : (
-                      <div className={`text-sm text-gray-700 ${sectionStates.education === 'rejected' ? 'line-through opacity-60' : ''}`}>
-                        {enhancedSections.education.enhanced}
-                      </div>
-                    )}
-                    <ActionButtons section="education" />
+  
+                {/* Experience */}
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Briefcase className="w-4 h-4 text-blue-600" />
+                    <h3 className="font-semibold text-gray-900">Experience</h3>
+                    {getStatusBadge('experience')}
                   </div>
-                )}
-              </div>
-
-              {/* Summary */}
-              <div className="mb-6">
-                <div className="flex items-center space-x-2 mb-3">
-                  <User className="w-4 h-4 text-blue-600" />
-                  <h3 className="font-semibold text-gray-900">Summary</h3>
-                  {getStatusBadge('summary')}
-                </div>
-                {enhancedSections.summary && (
-                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    {sectionStates.summary === 'editing' ? (
-                    <textarea
-                        value={editingContent.summary || ''}
-                      onChange={(e) => handleSectionEdit('summary', e.target.value)}
-                      className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
-                      rows={4}
-                    />
-                    ) : (
-                      <div className={`text-sm text-gray-700 ${sectionStates.summary === 'rejected' ? 'line-through opacity-60' : ''}`}>
-                        {enhancedSections.summary.enhanced}
+                  {enhancedSections.experience && (
+                    <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                      <div className="mb-2">
+                        <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Suggested Improvement</span>
                       </div>
-                    )}
-                    <ActionButtons section="summary" />
-                  </div>
-                )}
-              </div>
-
-              {/* Experience */}
-              <div className="mb-6">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Briefcase className="w-4 h-4 text-blue-600" />
-                  <h3 className="font-semibold text-gray-900">Experience</h3>
-                  {getStatusBadge('experience')}
-                </div>
-                {enhancedSections.experience && (
-                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    <div className="mb-2">
-                      <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Suggested Improvement</span>
-                    </div>
-                    {sectionStates.experience === 'editing' ? (
-                    <div className="space-y-2">
-                        {(editingContent.experience || enhancedSections.experience.enhanced).map((exp: string, index: number) => (
-                        <textarea
-                          key={index}
-                          value={exp}
-                          onChange={(e) => {
-                              const newExperience = [...(editingContent.experience || enhancedSections.experience.enhanced)];
-                            newExperience[index] = e.target.value;
-                            handleSectionEdit('experience', newExperience);
-                          }}
-                          className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
-                          rows={2}
-                        />
-                      ))}
-                    </div>
-                    ) : (
-                      <div className={`space-y-2 ${sectionStates.experience === 'rejected' ? 'line-through opacity-60' : ''}`}>
-                        {enhancedSections.experience.enhanced.map((exp: string, index: number) => (
-                          <div key={index} className="text-sm text-gray-700">
-                            {exp}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <ActionButtons section="experience" />
-                  </div>
-                )}
-              </div>
-
-              {/* Projects */}
-              <div className="mb-6">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Code className="w-4 h-4 text-blue-600" />
-                  <h3 className="font-semibold text-gray-900">Projects</h3>
-                  {getStatusBadge('projects')}
-                </div>
-                {enhancedSections.projects && (
-                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    {sectionStates.projects === 'editing' ? (
-                    <div className="space-y-4">
-                        {(editingContent.projects || enhancedSections.projects.enhanced).map((project: string, index: number) => (
-                        <div key={index} className="space-y-2">
+                      {sectionStates.experience === 'editing' ? (
+                      <div className="space-y-2">
+                          {(editingContent.experience || enhancedSections.experience.enhanced).map((exp: string, index: number) => (
                           <textarea
-                            value={project}
+                            key={index}
+                            value={exp}
                             onChange={(e) => {
-                                const newProjects = [...(editingContent.projects || enhancedSections.projects.enhanced)];
-                              newProjects[index] = e.target.value;
-                              handleSectionEdit('projects', newProjects);
+                                const newExperience = [...(editingContent.experience || enhancedSections.experience.enhanced)];
+                              newExperience[index] = e.target.value;
+                              handleSectionEdit('experience', newExperience);
                             }}
                             className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
                             rows={2}
                           />
-                          <input
-                            type="url"
-                            placeholder="Enter project hyperlink (e.g., GitHub or Live Demo)"
-                            value={projectHyperlinks[`project_${index}`] || ''}
-                            onChange={(e) => handleProjectHyperlinkChange(index, e.target.value)}
-                            className="w-full text-sm text-gray-600 bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          />
+                        ))}
+                      </div>
+                      ) : (
+                        <div className={`space-y-2 ${sectionStates.experience === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                          {enhancedSections.experience.enhanced.map((exp: string, index: number) => (
+                            <div key={index} className="text-sm text-gray-700">
+                              {exp}
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
+                      <ActionButtons section="experience" />
                     </div>
-                    ) : (
-                      <div className={`space-y-4 ${sectionStates.projects === 'rejected' ? 'line-through opacity-60' : ''}`}>
-                        {enhancedSections.projects.enhanced.map((project: string, index: number) => (
+                  )}
+                </div>
+  
+                {/* Projects */}
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Code className="w-4 h-4 text-blue-600" />
+                    <h3 className="font-semibold text-gray-900">Projects</h3>
+                    {getStatusBadge('projects')}
+                  </div>
+                  {enhancedSections.projects && (
+                    <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                      {sectionStates.projects === 'editing' ? (
+                      <div className="space-y-4">
+                          {(editingContent.projects || enhancedSections.projects.enhanced).map((project: string, index: number) => (
                           <div key={index} className="space-y-2">
-                            <div className="text-sm text-gray-700">{project}</div>
+                            <textarea
+                              value={project}
+                              onChange={(e) => {
+                                  const newProjects = [...(editingContent.projects || enhancedSections.projects.enhanced)];
+                                newProjects[index] = e.target.value;
+                                handleSectionEdit('projects', newProjects);
+                              }}
+                              className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
+                              rows={2}
+                            />
                             <input
                               type="url"
                               placeholder="Enter project hyperlink (e.g., GitHub or Live Demo)"
@@ -1153,194 +1138,209 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
                           </div>
                         ))}
                       </div>
-                    )}
-                    <ActionButtons section="projects" />
-                  </div>
-                )}
-              </div>
-
-              {/* Skills */}
-              <div className="mb-6">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Code className="w-4 h-4 text-blue-600" />
-                  <h3 className="font-semibold text-gray-900">Skills</h3>
+                      ) : (
+                        <div className={`space-y-4 ${sectionStates.projects === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                          {enhancedSections.projects.enhanced.map((project: string, index: number) => (
+                            <div key={index} className="space-y-2">
+                              <div className="text-sm text-gray-700">{project}</div>
+                              <input
+                                type="url"
+                                placeholder="Enter project hyperlink (e.g., GitHub or Live Demo)"
+                                value={projectHyperlinks[`project_${index}`] || ''}
+                                onChange={(e) => handleProjectHyperlinkChange(index, e.target.value)}
+                                className="w-full text-sm text-gray-600 bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <ActionButtons section="projects" />
+                    </div>
+                  )}
                 </div>
-                
-                {/* Current Skills */}
-                <div className="mb-4">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Current Skills</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {resumeData.skills.map((skill: string, index: number) => (
-                      <span key={index} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
-                        {skill}
-                      </span>
-                    ))}
-                    {/* Show selected additional skills */}
-                    {enhancedSections.skills && enhancedSections.skills.enhanced
-                      .filter((skill: string) => !resumeData.skills.includes(skill) && selectedSkills[skill])
-                      .map((skill: string, index: number) => (
-                        <span key={`new-${index}`} className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium">
-                          {skill} ✓
+  
+                {/* Skills */}
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Code className="w-4 h-4 text-blue-600" />
+                    <h3 className="font-semibold text-gray-900">Skills</h3>
+                  </div>
+                  
+                  {/* Current Skills */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Current Skills</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {resumeData.skills.map((skill: string, index: number) => (
+                        <span key={index} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
+                          {skill}
                         </span>
                       ))}
-                  </div>
-                </div>
-                
-                {/* Suggested Additional Skills */}
-                {enhancedSections.skills && (
-                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    <div className="mb-2">
-                      <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">
-                        Suggested Additional Skills
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {enhancedSections.skills.enhanced
-                        .filter((skill: string) => !resumeData.skills.includes(skill))
+                      {/* Show selected additional skills */}
+                      {enhancedSections.skills && enhancedSections.skills.enhanced
+                        .filter((skill: string) => !resumeData.skills.includes(skill) && selectedSkills[skill])
                         .map((skill: string, index: number) => (
-                        <label key={index} className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={selectedSkills[skill] || false}
-                            onChange={() => handleSkillToggle(skill)}
-                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                          />
-                          <span className={`px-2 py-1 rounded text-sm transition-colors ${
-                            selectedSkills[skill] 
-                              ? 'bg-green-100 text-green-800 font-medium' 
-                              : 'bg-blue-100 text-blue-800'
-                          }`}>
-                            {skill}
+                          <span key={`new-${index}`} className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium">
+                            {skill} ✓
                           </span>
-                        </label>
-                      ))}
+                        ))}
                     </div>
                   </div>
-                )}
-              </div>
-
-              {/* Achievements */}
-              <div className="mb-6">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Trophy className="w-4 h-4 text-blue-600" />
-                  <h3 className="font-semibold text-gray-900">Achievements</h3>
-                  {getStatusBadge('achievements')}
-                </div>
-                {enhancedSections.achievements && (
-                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    {sectionStates.achievements === 'editing' ? (
-                    <div className="space-y-2">
-                        {(editingContent.achievements || enhancedSections.achievements.enhanced).map((achievement: string, index: number) => (
-                        <textarea
-                          key={index}
-                          value={achievement}
-                          onChange={(e) => {
-                              const newAchievements = [...(editingContent.achievements || enhancedSections.achievements.enhanced)];
-                            newAchievements[index] = e.target.value;
-                            handleSectionEdit('achievements', newAchievements);
-                          }}
-                          className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
-                          rows={1}
-                        />
-                      ))}
-                    </div>
-                    ) : (
-                      <div className={`space-y-2 ${sectionStates.achievements === 'rejected' ? 'line-through opacity-60' : ''}`}>
-                        {enhancedSections.achievements.enhanced.map((achievement: string, index: number) => (
-                          <div key={index} className="text-sm text-gray-700">
-                            {achievement}
-                          </div>
+                  
+                  {/* Suggested Additional Skills */}
+                  {enhancedSections.skills && (
+                    <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                      <div className="mb-2">
+                        <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                          Suggested Additional Skills
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {enhancedSections.skills.enhanced
+                          .filter((skill: string) => !resumeData.skills.includes(skill))
+                          .map((skill: string, index: number) => (
+                          <label key={index} className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={selectedSkills[skill] || false}
+                              onChange={() => handleSkillToggle(skill)}
+                              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <span className={`px-2 py-1 rounded text-sm transition-colors ${
+                              selectedSkills[skill] 
+                                ? 'bg-green-100 text-green-800 font-medium' 
+                                : 'bg-blue-100 text-blue-800'
+                            }`}>
+                              {skill}
+                            </span>
+                          </label>
                         ))}
                       </div>
-                    )}
-                    <ActionButtons section="achievements" />
-                  </div>
-                )}
-              </div>
-
-              {/* Certifications */}
-              <NewSectionRenderer 
-                sectionType="certifications" 
-                title="Certifications" 
-                icon={Trophy}
-                hasHyperlinks={true}
-              />
-
-              {/* Research Papers */}
-              <NewSectionRenderer 
-                sectionType="researchPapers" 
-                title="Research Papers" 
-                icon={FileText}
-                hasHyperlinks={true}
-              />
-
-              {/* Volunteering */}
-              <NewSectionRenderer 
-                sectionType="volunteering" 
-                title="Volunteering" 
-                icon={User}
-                hasHyperlinks={false}
-              />
-            </div>
-          </div>
-          ) : (
-            /* Advanced Enhancement - Personalized Questions */
-            <div className="max-w-4xl mx-auto">
-              <div className="mb-6">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                  <div className="flex items-start space-x-3">
-                    <div className="bg-blue-100 rounded-full p-2">
-                      <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                      </svg>
                     </div>
-                    <div>
-                      <h3 className="font-medium text-blue-900 mb-1">AI Observations</h3>
-                      <p className="text-sm text-blue-800">
-                        Your resume shows strong Java and React skills, but lacks mention of version control systems like Git. Adding this experience can boost your fitment score as collaborative development is crucial for this role.
-                      </p>
-                    </div>
-                  </div>
+                  )}
                 </div>
-
-                <div className="bg-white border border-gray-200 rounded-lg p-6">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-2">Clarifying Questions</h2>
-                  <p className="text-sm text-gray-600 mb-6">Please answer these questions to help us better understand your experience:</p>
-                  
-                  <div className="space-y-6">
-                    {personalizedQuestions.map((question, index) => (
-                      <div key={question.id}>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">
-                          {index + 1}. {question.question}
-                        </label>
-                        <textarea
-                          value={advancedAnswers[question.id] || ''}
-                          onChange={(e) => handleAdvancedAnswerChange(question.id, e.target.value)}
-                          placeholder={question.placeholder}
-                          rows={4}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-sm"
-                        />
+  
+                {/* Achievements */}
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Trophy className="w-4 h-4 text-blue-600" />
+                    <h3 className="font-semibold text-gray-900">Achievements</h3>
+                    {getStatusBadge('achievements')}
+                  </div>
+                  {enhancedSections.achievements && (
+                    <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                      {sectionStates.achievements === 'editing' ? (
+                      <div className="space-y-2">
+                          {(editingContent.achievements || enhancedSections.achievements.enhanced).map((achievement: string, index: number) => (
+                          <textarea
+                            key={index}
+                            value={achievement}
+                            onChange={(e) => {
+                                const newAchievements = [...(editingContent.achievements || enhancedSections.achievements.enhanced)];
+                              newAchievements[index] = e.target.value;
+                              handleSectionEdit('achievements', newAchievements);
+                            }}
+                            className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
+                            rows={1}
+                          />
+                        ))}
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="flex justify-between mt-8">
-                    <button
-                      type="button"
-                      onClick={onClose}
-                      className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      Skip for now
-                    </button>
-                    <button className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm">
-                      Submit Answers
-                    </button>
-                  </div>                 
+                      ) : (
+                        <div className={`space-y-2 ${sectionStates.achievements === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                          {enhancedSections.achievements.enhanced.map((achievement: string, index: number) => (
+                            <div key={index} className="text-sm text-gray-700">
+                              {achievement}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <ActionButtons section="achievements" />
+                    </div>
+                  )}
                 </div>
+  
+                {/* Certifications */}
+                <NewSectionRenderer 
+                  sectionType="certifications" 
+                  title="Certifications" 
+                  icon={Trophy}
+                  hasHyperlinks={true}
+                />
+  
+                {/* Research Papers */}
+                <NewSectionRenderer 
+                  sectionType="researchPapers" 
+                  title="Research Papers" 
+                  icon={FileText}
+                  hasHyperlinks={true}
+                />
+  
+                {/* Volunteering */}
+                <NewSectionRenderer 
+                  sectionType="volunteering" 
+                  title="Volunteering" 
+                  icon={User}
+                  hasHyperlinks={false}
+                />
               </div>
-            </div>  
-          )}          
-        </div>
+            </div>
+            ) : (
+              /* Advanced Enhancement - Personalized Questions */
+              <div className="max-w-4xl mx-auto">
+                <div className="mb-6">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <div className="flex items-start space-x-3">
+                      <div className="bg-blue-100 rounded-full p-2">
+                        <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-blue-900 mb-1">AI Observations</h3>
+                        <p className="text-sm text-blue-800">
+                          Your resume shows strong Java and React skills, but lacks mention of version control systems like Git. Adding this experience can boost your fitment score as collaborative development is crucial for this role.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+  
+                  <div className="bg-white border border-gray-200 rounded-lg p-6">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-2">Clarifying Questions</h2>
+                    <p className="text-sm text-gray-600 mb-6">Please answer these questions to help us better understand your experience:</p>
+                    
+                    <div className="space-y-6">
+                      {personalizedQuestions.map((question, index) => (
+                        <div key={question.id}>
+                          <label className="block text-sm font-medium text-gray-900 mb-2">
+                            {index + 1}. {question.question}
+                          </label>
+                          <textarea
+                            value={advancedAnswers[question.id] || ''}
+                            onChange={(e) => handleAdvancedAnswerChange(question.id, e.target.value)}
+                            placeholder={question.placeholder}
+                            rows={4}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-sm"
+                          />
+                        </div>
+                      ))}
+                    </div>
+  
+                    <div className="flex justify-between mt-8">
+                      <button
+                        type="button"
+                        onClick={onClose}
+                        className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        Skip for now
+                      </button>
+                      <button className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm">
+                        Submit Answers
+                      </button>
+                    </div>                 
+                  </div>
+                </div>
+              </div>  
+            )}          
+          </div>
       </div>
     </div>
   </div>
