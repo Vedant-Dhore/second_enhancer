@@ -841,46 +841,24 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
           {activeTab === 'quick' && (
             <div className="flex items-center space-x-3">
               {/* Download Icon Button */}
-              <div className="relative">
-                <button
-                  onClick={isResumeEnhanced ? handleDownloadEnhancedResume : undefined}
-                  disabled={!isResumeEnhanced}
-                  className={`p-2 rounded-lg transition-colors ${
-                    isResumeEnhanced
-                      ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  }`}
-                  onMouseEnter={(e) => {
-                    if (!isResumeEnhanced) {
-                      const tooltip = document.createElement('div');
-                      tooltip.className =
-                        'absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded whitespace-nowrap z-50';
-                      tooltip.textContent = 'First save the enhanced resume';
-                      tooltip.id = 'download-tooltip';
-                      e.currentTarget.parentElement?.appendChild(tooltip);
-                    }
-                  }}
-                  onMouseLeave={() => {
-                    const tooltip = document.getElementById('download-tooltip');
-                    if (tooltip) {
-                      tooltip.remove();
-                    }
-                  }}
-                >
-                  <Download className="w-5 h-5" />
-                </button>
-              </div>
+              <button
+                onClick={handleDownloadEnhancedResume}
+                className="p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              >
+                <Download className="w-5 h-5" />
+              </button>
         
               {/* Save Button */}
               <button
                 onClick={handleSaveEnhancements}
                 className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-4 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm"
               >
-                Save Enhanced Resume
+                Save
               </button>
             </div>
           )}
         </div>
+
 
         
 
