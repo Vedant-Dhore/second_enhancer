@@ -659,7 +659,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
       case 'accepted':
         return (
             <span className="flex items-center text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded ml-2">
-              <TrendingUp className="w-3 h-3 mr-1" /> +2%
+              <TrendingUp className="w-3 h-3 mr-1" />+2%
             </span>
           );
       case 'rejected':
