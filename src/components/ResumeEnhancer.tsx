@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Wand2, Sparkles, CheckCircle, XCircle, RotateCcw, User, Mail, Phone, Linkedin, Github, GraduationCap, Briefcase, Code, Trophy, FileText, Save, Download } from 'lucide-react';
+import { X, Wand2, Sparkles, CheckCircle, XCircle, RotateCcw, User, Mail, Phone, Linkedin, Github, GraduationCap, Briefcase, Code, Trophy, FileText, Save } from 'lucide-react';
 
 interface Candidate {
   id: string;
@@ -41,67 +41,7 @@ const ResumeEnhancer: React.FC<ResumeEnhancerProps> = ({ candidate, onSave, onCl
   const [activeTab, setActiveTab] = useState<'quick' | 'advanced'>('quick');
   const [advancedAnswers, setAdvancedAnswers] = useState<{[key: string]: string}>({});
   const [isResumeEnhanced, setIsResumeEnhanced] = useState(false);
-  const [selectedEnhancements, setSelectedEnhancements] = useState<string[]>([]);
   
-  // Tab configuration
-  const tabs = [
-    { id: 'quick', label: 'Quick Enhancement' },
-    { id: 'advanced', label: 'Advanced Enhancement' }
-  ];
-
-  // Quick enhancement suggestions
-  const quickEnhancements = [
-    {
-      id: 'skills_1',
-      type: 'skill',
-      title: 'Add Missing Technical Skills',
-      description: 'Your resume lacks some key skills mentioned in the job requirements.',
-      impact: 'high',
-      scoreIncrease: 8,
-      suggestedSkills: ['Git', 'Docker', 'AWS', 'MongoDB']
-    },
-    {
-      id: 'experience_1',
-      type: 'experience',
-      title: 'Enhance Work Experience',
-      description: 'Add more details about your achievements and impact in previous roles.',
-      impact: 'medium',
-      scoreIncrease: 5,
-      suggestedExperience: 'Led a team of 3 developers to deliver a critical project 2 weeks ahead of schedule, resulting in 15% cost savings.'
-    },
-    {
-      id: 'project_1',
-      type: 'project',
-      title: 'Add Relevant Project',
-      description: 'Include a project that demonstrates your full-stack development skills.',
-      impact: 'medium',
-      scoreIncrease: 6,
-      suggestedProject: 'E-commerce Platform - Built a full-stack e-commerce application using React, Node.js, and MongoDB with payment integration and real-time inventory management.'
-    }
-  ];
-
-  // Advanced enhancement suggestions
-  const advancedEnhancements = [
-    {
-      id: 'cert_1',
-      type: 'certification',
-      title: 'Add Industry Certifications',
-      description: 'Professional certifications can significantly boost your credibility.',
-      impact: 'high',
-      scoreIncrease: 10,
-      suggestedCertification: 'AWS Certified Developer - Associate'
-    },
-    {
-      id: 'achievement_1',
-      type: 'achievement',
-      title: 'Highlight Key Achievements',
-      description: 'Quantifiable achievements make your resume stand out.',
-      impact: 'medium',
-      scoreIncrease: 7,
-      suggestedAchievement: 'Optimized database queries resulting in 40% improvement in application performance'
-    }
-  ];
-
   // Calculate enhancement metrics
   const handleDownloadEnhancedResume = () => {
     const enhancedResumeData = {
@@ -164,34 +104,6 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  };
-
-  const handleSaveEnhancedResume = () => {
-    if (candidate && onSave) {
-      const enhancedResume = {
-        ...resumeData,
-        education: sectionStates.education === 'accepted' ? enhancedSections.education?.enhanced : resumeData.education,
-        summary: sectionStates.summary === 'accepted' ? enhancedSections.summary?.enhanced : resumeData.summary,
-        experience: sectionStates.experience === 'accepted' ? enhancedSections.experience?.enhanced : resumeData.experience,
-        projects: sectionStates.projects === 'accepted' ? enhancedSections.projects?.enhanced : resumeData.projects,
-        skills: sectionStates.skills === 'accepted' ? enhancedSections.skills?.enhanced : resumeData.skills,
-        achievements: sectionStates.achievements === 'accepted' ? enhancedSections.achievements?.enhanced : resumeData.achievements,
-        projectHyperlinks: projectHyperlinks,
-        certifications: newSections.certifications.filter(entry => 
-          newSectionStates[`certifications_${entry.id}`] === 'accepted'
-        ),
-        researchPapers: newSections.researchPapers.filter(entry => 
-          newSectionStates[`researchPapers_${entry.id}`] === 'accepted'
-        ),
-        volunteering: newSections.volunteering.filter(entry => 
-          newSectionStates[`volunteering_${entry.id}`] === 'accepted'
-        ),
-        newSectionHyperlinks: newSectionHyperlinks
-      };
-      
-      onSave(candidate.id, currentFitmentScore, enhancedResume);
-    }
-    setIsResumeEnhanced(true);
   };
 
   const getEnhancementMetrics = () => {
@@ -843,7 +755,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-7xl max-h-[95vh] flex flex-col">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-7xl max-h-[95vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
@@ -898,181 +810,547 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
           </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex-shrink-0 border-b border-gray-200">
-          <div className="flex items-center justify-between px-6">
-            <nav className="flex space-x-8">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                    activeTab === tab.id
-                      ? 'border-purple-500 text-purple-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </nav>
-            
-            {/* Action Buttons */}
-            <div className="flex items-center space-x-3">
-              {/* Download Button (Icon) */}
-              <div className="relative">
-                <button
-                  onClick={handleDownloadEnhancedResume}
-                  disabled={!isResumeEnhanced}
-                  className={`p-2 rounded-lg transition-all duration-200 ${
-                    isResumeEnhanced
-                      ? 'bg-green-500 hover:bg-green-600 text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  }`}
-                  title={isResumeEnhanced ? "Download Enhanced Resume" : "Save enhancements first to download"}
-                >
-                  <Download className="w-4 h-4" />
-                </button>
-              </div>
-              
-              {/* Save Enhanced Resume Button */}
-              <button
-                onClick={handleSaveEnhancedResume}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm"
-              >
-                Save Enhanced Resume
-              </button>
-            </div>
+        {/* Tabs */}
+        <div className="px-6 py-4 border-b border-gray-200">
+          <div className="flex space-x-6">
+            <button
+              onClick={() => setActiveTab('quick')}
+              className={`pb-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'quick'
+                  ? 'border-purple-500 text-purple-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Quick Enhancement
+            </button>
+            <button
+              onClick={() => setActiveTab('advanced')}
+              className={`pb-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'advanced'
+                  ? 'border-purple-500 text-purple-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Advanced Enhancement
+            </button>
           </div>
         </div>
 
-        {/* Content Area */}
-        <div className="flex-1 overflow-y-auto">
+
+        {/* Save Button - Only show for Quick Enhancement */}
+        {activeTab === 'quick' && (
+          <div className="px-6 pb-0 border-b border-gray-200">
+          <div className="flex justify-end space-x-4">
+            <div className="relative">
+              <button
+                onClick={isResumeEnhanced ? handleDownloadEnhancedResume : undefined}
+                disabled={!isResumeEnhanced}
+                className={`px-6 py-2 rounded-lg transition-colors ${
+                  isResumeEnhanced
+                    ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+                onMouseEnter={(e) => {
+                  if (!isResumeEnhanced) {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded whitespace-nowrap z-50';
+                    tooltip.textContent = 'First save the enhanced resume';
+                    tooltip.id = 'download-tooltip';
+                    e.currentTarget.parentElement?.appendChild(tooltip);
+                  }
+                }}
+                onMouseLeave={() => {
+                  const tooltip = document.getElementById('download-tooltip');
+                  if (tooltip) {
+                    tooltip.remove();
+                  }
+                }}
+              >
+                Download Enhanced Resume
+              </button>
+            </div>
+            <button
+              onClick={handleSaveEnhancements}
+              className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm"
+            >
+              Save Enhanced Resume
+            </button>
+          </div>
+          </div>
+          )}
+
+
+        {/* Tab Content */}
+        <div className="p-6">
           {activeTab === 'quick' ? (
-            <div className="p-6 space-y-6">
-              {/* Quick Enhancement Content */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Quick Enhancement Suggestions</h3>
-                
-                {quickEnhancements.map((enhancement) => (
-                  <div key={enhancement.id} className="border border-gray-200 rounded-lg p-4 hover:border-purple-200 transition-colors">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${enhancement.impact === 'high' ? 'bg-red-100 text-red-800' : enhancement.impact === 'medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
-                            {enhancement.impact.toUpperCase()} IMPACT
-                          </span>
-                          <span className="text-sm text-gray-500">+{enhancement.scoreIncrease}% fitment</span>
-                        </div>
-                        <h4 className="font-medium text-gray-900 mb-1">{enhancement.title}</h4>
-                        <p className="text-sm text-gray-600 mb-3">{enhancement.description}</p>
-                        
-                        {enhancement.type === 'skill' && enhancement.suggestedSkills && (
-                          <div className="mb-3">
-                            <p className="text-sm font-medium text-gray-700 mb-2">Suggested skills to add:</p>
-                            <div className="flex flex-wrap gap-2">
-                              {enhancement.suggestedSkills.map((skill, index) => (
-                                <span key={index} className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">
-                                  {skill}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        
-                        {enhancement.type === 'experience' && enhancement.suggestedExperience && (
-                          <div className="mb-3">
-                            <p className="text-sm font-medium text-gray-700 mb-2">Suggested experience to add:</p>
-                            <div className="bg-gray-50 p-3 rounded border-l-4 border-purple-400">
-                              <p className="text-sm text-gray-700">{enhancement.suggestedExperience}</p>
-                            </div>
-                          </div>
-                        )}
-                        
-                        {enhancement.type === 'project' && enhancement.suggestedProject && (
-                          <div className="mb-3">
-                            <p className="text-sm font-medium text-gray-700 mb-2">Suggested project to add:</p>
-                            <div className="bg-gray-50 p-3 rounded border-l-4 border-purple-400">
-                              <p className="text-sm text-gray-700">{enhancement.suggestedProject}</p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="flex items-center space-x-2 ml-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedEnhancements.includes(enhancement.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedEnhancements([...selectedEnhancements, enhancement.id]);
-                            } else {
-                              setSelectedEnhancements(selectedEnhancements.filter(id => id !== enhancement.id));
-                            }
-                          }}
-                          className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                        />
-                      </div>
-                    </div>
+            /* Quick Enhancement - Resume Comparison */
+          <div className="grid grid-cols-2 gap-8">
+            {/* Original Resume */}
+            <div>
+              <div className="flex items-center space-x-2 mb-6">
+                <FileText className="w-5 h-5 text-gray-600" />
+                <h2 className="text-xl font-bold text-gray-900">Original Resume</h2>
+              </div>
+
+              {/* Contact Info */}
+              <div className="mb-6 text-center">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">{resumeData.name}</h3>
+                <div className="space-y-1 text-sm text-gray-600">
+                  <div className="flex items-center justify-center space-x-2">
+                    <Mail className="w-4 h-4" />
+                    <span>{resumeData.email}</span>
                   </div>
-                ))}
+                  <div className="flex items-center justify-center space-x-2">
+                    <Phone className="w-4 h-4" />
+                    <span>{resumeData.contact}</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <Linkedin className="w-4 h-4" />
+                    <span>{resumeData.linkedin}</span>
+                  </div>
+                  {resumeData.github && (
+                    <div className="flex items-center justify-center space-x-2">
+                      <Github className="w-4 h-4" />
+                      <span>{resumeData.github}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Education */}
+              <div className="mb-6">
+                <div className="flex items-center space-x-2 mb-3">
+                  <GraduationCap className="w-4 h-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">Education</h3>
+                </div>
+                <p className="text-gray-700 text-sm">{resumeData.education}</p>
+              </div>
+
+              {/* Summary */}
+              <div className="mb-6">
+                <div className="flex items-center space-x-2 mb-3">
+                  <User className="w-4 h-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">Summary</h3>
+                </div>
+                <p className="text-gray-700 text-sm">{resumeData.summary}</p>
+              </div>
+
+              {/* Experience */}
+              <div className="mb-6">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Briefcase className="w-4 h-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">Experience</h3>
+                </div>
+                <div className="space-y-2">
+                  {resumeData.experience.map((exp: string, index: number) => (
+                    <p key={index} className="text-gray-700 text-sm">• {exp}</p>
+                  ))}
+                </div>
+              </div>
+
+              {/* Projects */}
+              <div className="mb-6">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Code className="w-4 h-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">Projects</h3>
+                </div>
+                <div className="space-y-2">
+                  {resumeData.projects.map((project: string, index: number) => (
+                    <p key={index} className="text-gray-700 text-sm">• {project}</p>
+                  ))}
+                </div>
+              </div>
+
+              {/* Skills */}
+              <div className="mb-6">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Code className="w-4 h-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">Skills</h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {resumeData.skills.map((skill: string, index: number) => (
+                    <span key={index} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Achievements */}
+              <div className="mb-6">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Trophy className="w-4 h-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">Achievements</h3>
+                </div>
+                <div className="space-y-2">
+                  {resumeData.achievements.map((achievement: string, index: number) => (
+                    <p key={index} className="text-gray-700 text-sm">• {achievement}</p>
+                  ))}
+                </div>
               </div>
             </div>
-          ) : (
-            <div className="p-6 space-y-6">
-              {/* Advanced Enhancement Content */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Advanced Enhancement Options</h3>
-                
-                {advancedEnhancements.map((enhancement) => (
-                  <div key={enhancement.id} className="border border-gray-200 rounded-lg p-4 hover:border-purple-200 transition-colors">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${enhancement.impact === 'high' ? 'bg-red-100 text-red-800' : enhancement.impact === 'medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
-                            {enhancement.impact.toUpperCase()} IMPACT
-                          </span>
-                          <span className="text-sm text-gray-500">+{enhancement.scoreIncrease}% fitment</span>
-                        </div>
-                        <h4 className="font-medium text-gray-900 mb-1">{enhancement.title}</h4>
-                        <p className="text-sm text-gray-600 mb-3">{enhancement.description}</p>
-                        
-                        {enhancement.type === 'certification' && enhancement.suggestedCertification && (
-                          <div className="mb-3">
-                            <p className="text-sm font-medium text-gray-700 mb-2">Suggested certification:</p>
-                            <div className="bg-gray-50 p-3 rounded border-l-4 border-purple-400">
-                              <p className="text-sm text-gray-700">{enhancement.suggestedCertification}</p>
-                            </div>
-                          </div>
-                        )}
-                        
-                        {enhancement.type === 'achievement' && enhancement.suggestedAchievement && (
-                          <div className="mb-3">
-                            <p className="text-sm font-medium text-gray-700 mb-2">Suggested achievement:</p>
-                            <div className="bg-gray-50 p-3 rounded border-l-4 border-purple-400">
-                              <p className="text-sm text-gray-700">{enhancement.suggestedAchievement}</p>
-                            </div>
-                          </div>
-                        )}
+
+            {/* Enhanced Resume */}
+            <div>
+              <div className="flex items-center space-x-2 mb-6">
+                <Sparkles className="w-5 h-5 text-purple-600" />
+                <h2 className="text-xl font-bold text-gray-900">Enhanced Resume</h2>
+              </div>
+
+              {/* Contact Info */}
+              <div className="mb-6 text-center">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">{resumeData.name}</h3>
+                <div className="space-y-1 text-sm text-gray-600">
+                  <div className="flex items-center justify-center space-x-2">
+                    <Mail className="w-4 h-4" />
+                    <span>{resumeData.email}</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <Phone className="w-4 h-4" />
+                    <span>{resumeData.contact}</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <Linkedin className="w-4 h-4" />
+                    <span>{resumeData.linkedin}</span>
+                  </div>
+                  {resumeData.github && (
+                    <div className="flex items-center justify-center space-x-2">
+                      <Github className="w-4 h-4" />
+                      <span>{resumeData.github}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Education */}
+              <div className="mb-6">
+                <div className="flex items-center space-x-2 mb-3">
+                  <GraduationCap className="w-4 h-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">Education</h3>
+                  {getStatusBadge('education')}
+                </div>
+                {enhancedSections.education && (
+                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    <div className="mb-2">
+                      <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Suggested Addition</span>
+                    </div>
+                    {sectionStates.education === 'editing' ? (
+                    <textarea
+                        value={editingContent.education || ''}
+                      onChange={(e) => handleSectionEdit('education', e.target.value)}
+                      className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
+                      rows={3}
+                    />
+                    ) : (
+                      <div className={`text-sm text-gray-700 ${sectionStates.education === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                        {enhancedSections.education.enhanced}
                       </div>
-                      
-                      <div className="flex items-center space-x-2 ml-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedEnhancements.includes(enhancement.id)}
+                    )}
+                    <ActionButtons section="education" />
+                  </div>
+                )}
+              </div>
+
+              {/* Summary */}
+              <div className="mb-6">
+                <div className="flex items-center space-x-2 mb-3">
+                  <User className="w-4 h-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">Summary</h3>
+                  {getStatusBadge('summary')}
+                </div>
+                {enhancedSections.summary && (
+                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    {sectionStates.summary === 'editing' ? (
+                    <textarea
+                        value={editingContent.summary || ''}
+                      onChange={(e) => handleSectionEdit('summary', e.target.value)}
+                      className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
+                      rows={4}
+                    />
+                    ) : (
+                      <div className={`text-sm text-gray-700 ${sectionStates.summary === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                        {enhancedSections.summary.enhanced}
+                      </div>
+                    )}
+                    <ActionButtons section="summary" />
+                  </div>
+                )}
+              </div>
+
+              {/* Experience */}
+              <div className="mb-6">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Briefcase className="w-4 h-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">Experience</h3>
+                  {getStatusBadge('experience')}
+                </div>
+                {enhancedSections.experience && (
+                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    <div className="mb-2">
+                      <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Suggested Improvement</span>
+                    </div>
+                    {sectionStates.experience === 'editing' ? (
+                    <div className="space-y-2">
+                        {(editingContent.experience || enhancedSections.experience.enhanced).map((exp: string, index: number) => (
+                        <textarea
+                          key={index}
+                          value={exp}
                           onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedEnhancements([...selectedEnhancements, enhancement.id]);
-                            } else {
-                              setSelectedEnhancements(selectedEnhancements.filter(id => id !== enhancement.id));
-                            }
+                              const newExperience = [...(editingContent.experience || enhancedSections.experience.enhanced)];
+                            newExperience[index] = e.target.value;
+                            handleSectionEdit('experience', newExperience);
                           }}
-                          className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                          className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
+                          rows={2}
                         />
+                      ))}
+                    </div>
+                    ) : (
+                      <div className={`space-y-2 ${sectionStates.experience === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                        {enhancedSections.experience.enhanced.map((exp: string, index: number) => (
+                          <div key={index} className="text-sm text-gray-700">
+                            {exp}
+                          </div>
+                        ))}
                       </div>
+                    )}
+                    <ActionButtons section="experience" />
+                  </div>
+                )}
+              </div>
+
+              {/* Projects */}
+              <div className="mb-6">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Code className="w-4 h-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">Projects</h3>
+                  {getStatusBadge('projects')}
+                </div>
+                {enhancedSections.projects && (
+                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    {sectionStates.projects === 'editing' ? (
+                    <div className="space-y-4">
+                        {(editingContent.projects || enhancedSections.projects.enhanced).map((project: string, index: number) => (
+                        <div key={index} className="space-y-2">
+                          <textarea
+                            value={project}
+                            onChange={(e) => {
+                                const newProjects = [...(editingContent.projects || enhancedSections.projects.enhanced)];
+                              newProjects[index] = e.target.value;
+                              handleSectionEdit('projects', newProjects);
+                            }}
+                            className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
+                            rows={2}
+                          />
+                          <input
+                            type="url"
+                            placeholder="Enter project hyperlink (e.g., GitHub or Live Demo)"
+                            value={projectHyperlinks[`project_${index}`] || ''}
+                            onChange={(e) => handleProjectHyperlinkChange(index, e.target.value)}
+                            className="w-full text-sm text-gray-600 bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    ) : (
+                      <div className={`space-y-4 ${sectionStates.projects === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                        {enhancedSections.projects.enhanced.map((project: string, index: number) => (
+                          <div key={index} className="space-y-2">
+                            <div className="text-sm text-gray-700">{project}</div>
+                            <input
+                              type="url"
+                              placeholder="Enter project hyperlink (e.g., GitHub or Live Demo)"
+                              value={projectHyperlinks[`project_${index}`] || ''}
+                              onChange={(e) => handleProjectHyperlinkChange(index, e.target.value)}
+                              className="w-full text-sm text-gray-600 bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <ActionButtons section="projects" />
+                  </div>
+                )}
+              </div>
+
+              {/* Skills */}
+              <div className="mb-6">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Code className="w-4 h-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">Skills</h3>
+                </div>
+                
+                {/* Current Skills */}
+                <div className="mb-4">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Current Skills</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {resumeData.skills.map((skill: string, index: number) => (
+                      <span key={index} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
+                        {skill}
+                      </span>
+                    ))}
+                    {/* Show selected additional skills */}
+                    {enhancedSections.skills && enhancedSections.skills.enhanced
+                      .filter((skill: string) => !resumeData.skills.includes(skill) && selectedSkills[skill])
+                      .map((skill: string, index: number) => (
+                        <span key={`new-${index}`} className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium">
+                          {skill} ✓
+                        </span>
+                      ))}
+                  </div>
+                </div>
+                
+                {/* Suggested Additional Skills */}
+                {enhancedSections.skills && (
+                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    <div className="mb-2">
+                      <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                        Suggested Additional Skills
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {enhancedSections.skills.enhanced
+                        .filter((skill: string) => !resumeData.skills.includes(skill))
+                        .map((skill: string, index: number) => (
+                        <label key={index} className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={selectedSkills[skill] || false}
+                            onChange={() => handleSkillToggle(skill)}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className={`px-2 py-1 rounded text-sm transition-colors ${
+                            selectedSkills[skill] 
+                              ? 'bg-green-100 text-green-800 font-medium' 
+                              : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {skill}
+                          </span>
+                        </label>
+                      ))}
                     </div>
                   </div>
-                ))}
+                )}
+              </div>
+
+              {/* Achievements */}
+              <div className="mb-6">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Trophy className="w-4 h-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">Achievements</h3>
+                  {getStatusBadge('achievements')}
+                </div>
+                {enhancedSections.achievements && (
+                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    {sectionStates.achievements === 'editing' ? (
+                    <div className="space-y-2">
+                        {(editingContent.achievements || enhancedSections.achievements.enhanced).map((achievement: string, index: number) => (
+                        <textarea
+                          key={index}
+                          value={achievement}
+                          onChange={(e) => {
+                              const newAchievements = [...(editingContent.achievements || enhancedSections.achievements.enhanced)];
+                            newAchievements[index] = e.target.value;
+                            handleSectionEdit('achievements', newAchievements);
+                          }}
+                          className="w-full text-sm text-gray-700 bg-transparent border-none resize-none focus:outline-none"
+                          rows={1}
+                        />
+                      ))}
+                    </div>
+                    ) : (
+                      <div className={`space-y-2 ${sectionStates.achievements === 'rejected' ? 'line-through opacity-60' : ''}`}>
+                        {enhancedSections.achievements.enhanced.map((achievement: string, index: number) => (
+                          <div key={index} className="text-sm text-gray-700">
+                            {achievement}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <ActionButtons section="achievements" />
+                  </div>
+                )}
+              </div>
+
+              {/* Certifications */}
+              <NewSectionRenderer 
+                sectionType="certifications" 
+                title="Certifications" 
+                icon={Trophy}
+                hasHyperlinks={true}
+              />
+
+              {/* Research Papers */}
+              <NewSectionRenderer 
+                sectionType="researchPapers" 
+                title="Research Papers" 
+                icon={FileText}
+                hasHyperlinks={true}
+              />
+
+              {/* Volunteering */}
+              <NewSectionRenderer 
+                sectionType="volunteering" 
+                title="Volunteering" 
+                icon={User}
+                hasHyperlinks={false}
+              />
+            </div>
+          </div>
+          ) : (
+            /* Advanced Enhancement - Personalized Questions */
+            <div className="max-w-4xl mx-auto">
+              <div className="mb-6">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-start space-x-3">
+                    <div className="bg-blue-100 rounded-full p-2">
+                      <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-blue-900 mb-1">AI Observations</h3>
+                      <p className="text-sm text-blue-800">
+                        Your resume shows strong Java and React skills, but lacks mention of version control systems like Git. Adding this experience can boost your fitment score as collaborative development is crucial for this role.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-lg p-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-2">Clarifying Questions</h2>
+                  <p className="text-sm text-gray-600 mb-6">Please answer these questions to help us better understand your experience:</p>
+                  
+                  <div className="space-y-6">
+                    {personalizedQuestions.map((question, index) => (
+                      <div key={question.id}>
+                        <label className="block text-sm font-medium text-gray-900 mb-2">
+                          {index + 1}. {question.question}
+                        </label>
+                        <textarea
+                          value={advancedAnswers[question.id] || ''}
+                          onChange={(e) => handleAdvancedAnswerChange(question.id, e.target.value)}
+                          placeholder={question.placeholder}
+                          rows={4}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-sm"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex justify-between mt-8">
+                    <button
+                      type="button"
+                      onClick={onClose}
+                      className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      Skip for now
+                    </button>
+                    <button className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm">
+                      Submit Answers
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
