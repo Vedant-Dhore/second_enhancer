@@ -812,7 +812,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
 
 
         {/* Tabs + Buttons Row */}
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <div className="px-6 py-2 border-b border-gray-200 flex items-center justify-between">
           {/* Tabs */}
           <div className="flex space-x-4">
             <button
