@@ -814,7 +814,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
         {/* Tabs + Buttons Row */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           {/* Tabs */}
-          <div className="flex space-x-6">
+          <div className="flex space-x-10">
             <button
               onClick={() => setActiveTab('quick')}
               className={`pb-2 px-1 border-b-2 font-medium text-sm transition-colors ${
