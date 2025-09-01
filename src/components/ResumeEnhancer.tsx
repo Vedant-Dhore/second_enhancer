@@ -866,6 +866,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
 
         
         {/* Tab Content */}
+        <div className="overflow-y-auto flex-1">
         <div className="p-6">
           {activeTab === 'quick' ? (
             /* Quick Enhancement - Resume Comparison */
@@ -1340,6 +1341,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
             </div>  
           )}          
         </div>
+      </div>
       </div>
     </div>
   );
