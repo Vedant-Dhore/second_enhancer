@@ -867,6 +867,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
                 }}
               >
                 Download Enhanced Resume
+                <Download className="w-5 h-5" />
               </button>
             </div>
             <button
