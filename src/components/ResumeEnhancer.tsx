@@ -1335,13 +1335,11 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
                     <button className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm">
                       Submit Answers
                     </button>
-                  </div>
-                  
+                  </div>                 
                 </div>
               </div>
             </div>  
-          )}
-          
+          )}          
         </div>
       </div>
     </div>
