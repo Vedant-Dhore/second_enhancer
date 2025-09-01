@@ -657,7 +657,11 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
     
     switch (currentState) {
       case 'accepted':
-        return <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded ml-2">↑ +2%</span>;
+        return (
+            <span className="flex items-center text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded ml-2">
+              <TrendingUp className="w-3 h-3 mr-1" /> +2%
+            </span>
+          );
       case 'rejected':
         return <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded ml-2">✗ Rejected</span>;
       case 'editing':
