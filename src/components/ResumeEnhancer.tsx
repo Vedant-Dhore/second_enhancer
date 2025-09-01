@@ -1338,11 +1338,9 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
                   </div>
                 </div>
               </div>
-            </div>
-          
+            </div>          
           )}
         </div>
-      
       </div>
     </div>
   );
