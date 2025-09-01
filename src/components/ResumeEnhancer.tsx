@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Wand2, Sparkles, CheckCircle, XCircle, RotateCcw, User, Mail, Phone, Linkedin, Github, GraduationCap, Briefcase, Code, Trophy, FileText, Save } from 'lucide-react';
+import { X, Wand2, Sparkles, Download, CheckCircle, XCircle, RotateCcw, User, Mail, Phone, Linkedin, Github, GraduationCap, Briefcase, Code, Trophy, FileText, Save } from 'lucide-react';
 
 interface Candidate {
   id: string;
@@ -866,7 +866,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
                   }
                 }}
               >
-                Download Enhanced Resume
+                {/* Download Enhanced Resume */}
                 <Download className="w-5 h-5" />
               </button>
             </div>
