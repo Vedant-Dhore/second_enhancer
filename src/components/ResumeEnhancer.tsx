@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Wand2, Sparkles, Download, CheckCircle, XCircle, RotateCcw, User, Mail, Phone, Linkedin, Github, GraduationCap, Briefcase, Code, Trophy, FileText, Save } from 'lucide-react';
+import { X, Wand2, Sparkles, Download, CheckCircle, XCircle, RotateCcw, User, Mail, Phone, Linkedin, Github, GraduationCap, Briefcase, Code, Trophy, FileText, Save, TrendingUp } from 'lucide-react';
 
 interface Candidate {
   id: string;
