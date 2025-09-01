@@ -814,7 +814,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
         {/* Tabs + Buttons Row */}
         <div className="px-6 py-2 border-b border-gray-200 flex items-center justify-between">
           {/* Tabs */}
-          <div className="flex space-x-4">
+          <div className="flex space-x-6">
             <button
               onClick={() => setActiveTab('quick')}
               className={`pb-2 px-1 border-b-2 font-medium text-sm transition-colors ${
@@ -837,26 +837,30 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
             </button>
           </div>
         
-          {/* Buttons - Only show for Quick Enhancement */}
-          {activeTab === 'quick' && (
-            <div className="flex items-center space-x-3">
-              {/* Download Icon Button */}
-              <button
-                onClick={handleDownloadEnhancedResume}
-                className="p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-              >
-                <Download className="w-5 h-5" />
-              </button>
+          {/* Buttons section (always rendered to keep height consistent) */}
+          <div className="flex items-center space-x-3">
+            {activeTab === 'quick' ? (
+              <>
+                {/* Download Icon Button */}
+                <button
+                  onClick={handleDownloadEnhancedResume}
+                  className="p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                >
+                  <Download className="w-5 h-5" />
+                </button>
         
-              {/* Save Button */}
-              <button
-                onClick={handleSaveEnhancements}
-                className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-4 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm"
-              >
-                Save
-              </button>
-            </div>
-          )}
+                {/* Save Button */}
+                <button
+                  onClick={handleSaveEnhancements}
+                  className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-4 py-2 rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-200 shadow-sm"
+                >
+                  Save
+                </button>
+              </>
+            ) : (
+              <div className="h-9" />  {/* placeholder to preserve row height */}
+            )}
+          </div>
         </div>
 
 
