@@ -1283,7 +1283,6 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
               />
             </div>
           </div>
-      </div>
           ) : (
             /* Advanced Enhancement - Personalized Questions */
             <div className="max-w-4xl mx-auto">
@@ -1337,10 +1336,12 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
                       Submit Answers
                     </button>
                   </div>
+                  
                 </div>
               </div>
-            </div>          
+            </div>  
           )}
+          </div>
         </div>
       </div>
     </div>
