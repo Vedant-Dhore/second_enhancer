@@ -865,10 +865,8 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
 
 
         
-
-
-      <div className="overflow-y-auto flex-1">
         {/* Tab Content */}
+        <div className="overflow-y-auto flex-1">
         <div className="p-6">
           {activeTab === 'quick' ? (
             /* Quick Enhancement - Resume Comparison */
@@ -1285,7 +1283,6 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
               />
             </div>
           </div>
-        </div>
           ) : (
             /* Advanced Enhancement - Personalized Questions */
             <div className="max-w-4xl mx-auto">
@@ -1342,8 +1339,10 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
                 </div>
               </div>
             </div>
+          
           )}
         </div>
+      </div>
       </div>
     </div>
   );
