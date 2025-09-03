@@ -766,7 +766,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
             <div className="flex items-center space-x-3">
               <Wand2 className="w-8 h-8 text-purple-600" />
               <div>
-                <h1 className="text-2xl font-bold text-red-900">Resume Enhancer</h1>
+                <h1 className="text-2xl font-bold text-yellow-900">Resume Enhancer</h1>
                 <p className="text-gray-600">AI-powered resume optimization for better job fitment</p>
               </div>
             </div>
