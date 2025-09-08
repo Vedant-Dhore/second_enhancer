@@ -868,31 +868,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
 
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto p-6">
-          {/* Tab Navigation */}
-          <div className="mb-6">
-            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
-              <button
-                onClick={() => setActiveTab('quick')}
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === 'quick'
-                    ? 'bg-white text-purple-600 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Quick Enhancementerrrr
-              </button>
-              <button
-                onClick={() => setActiveTab('advanced')}
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === 'advanced'
-                    ? 'bg-white text-purple-600 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Advanced Enhancement
-              </button>
-            </div>
-          </div>
+          
 
           {/* Tab Content */}
           <div>
