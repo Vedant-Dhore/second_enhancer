@@ -879,7 +879,7 @@ ${enhancedResumeData.volunteering?.length ? `VOLUNTEERING\n${enhancedResumeData.
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                Quick Enhancement
+                Quick Enhancementerrrr
               </button>
               <button
                 onClick={() => setActiveTab('advanced')}
