@@ -197,7 +197,7 @@ const CandidatesKanban: React.FC = () => {
                 <button 
                   onClick={() => handleResumeEnhancer(candidate)}
                   className="p-1 hover:bg-purple-100 rounded transition-colors group"
-                  title="Resume Enhancer"
+                  title="Resume Enhanceroooo"
                 >
                   <Wand2 className="w-4 h-4 text-purple-500 group-hover:text-purple-600" />
                 </button>
